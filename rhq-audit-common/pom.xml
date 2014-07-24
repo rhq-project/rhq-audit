@@ -10,18 +10,13 @@
     </parent>
 
     <groupId>org.rhq.audit</groupId>
-    <artifactId>rhq-audit-producer</artifactId>
+    <artifactId>rhq-audit-common</artifactId>
     <packaging>jar</packaging>
     <version>0.1</version>
-    <name>RHQ Audit Producer</name>
+    <name>RHQ Audit Common Library</name>
+    <description>RHQ Audit Common Library for use with both consumer and producer</description>
 
     <dependencies>
-        <dependency>
-            <groupId>org.rhq.audit</groupId>
-            <artifactId>rhq-audit-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
