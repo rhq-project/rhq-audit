@@ -27,7 +27,9 @@
         <!-- DEPENDENCY VERSIONS -->
 
         <activemq-version>5.10.0</activemq-version>
+        <spring-version>2.5.5</spring-version>
         <testng-version>6.5.2</testng-version>
+        <getopt.version>1.0.13</getopt.version>
 
     </properties>
 
@@ -60,6 +62,22 @@
         <module>rhq-audit-broker</module>
     </modules>
 
+    <profiles>
+        <profile>
+            <id>test.debug</id>
+            <activation>
+                <property>
+                    <name>test.debug</name>
+                </property>
+            </activation>
+
+            <properties>
+                <!-- See: http://maven.apache.org/plugins/maven-surefire-plugin/test-mojo.html#debugForkedProcess -->
+                <maven.surefire.debug>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y</maven.surefire.debug>
+            </properties>
+        </profile>
+    </profiles>
+
     <scm>
         <connection>scm:git:https://github.com/rhq-project/rhq-audit.git</connection>
         <developerConnection>scm:git:git@github.com:rhq-project/rhq-audit.git</developerConnection>
@@ -69,10 +87,29 @@
     <dependencyManagement>
         <dependencies>
 
+            <!-- the core ActiveMQ -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-all</artifactId>
                 <version>${activemq-version}</version>
+            </dependency>
+
+            <!-- Spring is needed by ActiveMQ Broker to load its .xml config file -->
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-spring</artifactId>
+                <version>${activemq-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring</artifactId>
+                <version>${spring-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>gnu.getopt</groupId>
+                <artifactId>java-getopt</artifactId>
+                <version>${getopt.version}</version>
             </dependency>
 
             <!-- TEST DEPENDENCIES -->
@@ -152,14 +189,6 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin-version}</version>
                     <configuration>
-                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                        <forkCount>1</forkCount>
-                        <reuseForks>true</reuseForks>
-                        <argLine>-enableassertions</argLine>
-                        <failIfNoTests>false</failIfNoTests>
-                        <systemPropertyVariables>
-                            <java.awt.headless>true</java.awt.headless>
-                        </systemPropertyVariables>
                         <argLine>-Xmx512m</argLine>
                     </configuration>
                 </plugin>
@@ -211,7 +240,7 @@
 
     <repositories>
         <repository>
-            <id>Public JBoss Repository</id>
+            <id>JBoss.org Public-JBoss NEXUS Repo</id>
             <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
             <releases>
                 <enabled>true</enabled>
@@ -220,6 +249,18 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+
+        <repository>
+            <id>JBoss.org Public NEXUS Repo</id>
+            <url>http://repository.jboss.org/nexus/content/groups/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
     </repositories>
 
 </project>
