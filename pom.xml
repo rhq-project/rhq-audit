@@ -57,9 +57,10 @@
 
     <modules>
         <module>rhq-audit-common</module>
+        <module>rhq-audit-broker</module>
+        <module>rhq-audit-test-common</module>
         <module>rhq-audit-producer</module>
         <module>rhq-audit-consumer</module>
-        <module>rhq-audit-broker</module>
     </modules>
 
     <profiles>

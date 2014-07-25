@@ -4,7 +4,7 @@
 
     <s:bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" />
 
-    <broker persistent="false" useJmx="false" brokerName="tcp-testbroker">
+    <broker persistent="false" useJmx="false" brokerName="testbroker">
         <transportConnectors>
             <transportConnector name="openwire" uri="tcp://localhost:${test.bind.port}" />
         </transportConnectors>

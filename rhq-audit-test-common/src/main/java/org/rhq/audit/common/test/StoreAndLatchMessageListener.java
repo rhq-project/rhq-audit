@@ -1,4 +1,4 @@
-package org.rhq.audit.broker;
+package org.rhq.audit.common.test;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -12,13 +12,13 @@ import javax.jms.TextMessage;
  * given to it. This listener will notify when it gets a message by counting
  * down a latch.
  */
-public class TestMessageListener implements MessageListener {
+public class StoreAndLatchMessageListener implements MessageListener {
 
     private final CountDownLatch latch;
     private final ArrayList<String> messages;
     private final ArrayList<String> errors;
 
-    public TestMessageListener(CountDownLatch latch, ArrayList<String> messages, ArrayList<String> errors) {
+    public StoreAndLatchMessageListener(CountDownLatch latch, ArrayList<String> messages, ArrayList<String> errors) {
         this.latch = latch;
         this.messages = messages;
         this.errors = errors;

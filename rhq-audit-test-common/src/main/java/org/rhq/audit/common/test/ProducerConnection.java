@@ -1,0 +1,41 @@
+package org.rhq.audit.common.test;
+
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+
+import org.apache.activemq.ActiveMQConnectionFactory;
+
+public class ProducerConnection {
+    private Connection connection;
+    private MessageProducer producer;
+    private Session session;
+
+    public ProducerConnection(String brokerURL, String queue) throws JMSException {
+        createConnection(brokerURL, queue);
+    }
+
+    protected void createConnection(String brokerURL, String queue) throws JMSException {
+        ConnectionFactory connFactory = new ActiveMQConnectionFactory(brokerURL);
+        Connection conn = connFactory.createConnection();
+        conn.start();
+        this.session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        Destination dest = session.createQueue("test");
+        this.connection = conn;
+        this.producer = session.createProducer(dest);
+    }
+
+    public void sendMessage(String msg) throws JMSException {
+        Message producerMessage = session.createTextMessage(msg);
+        producer.send(producerMessage);
+
+    }
+
+    public void close() throws JMSException {
+        connection.close();
+    }
+}
