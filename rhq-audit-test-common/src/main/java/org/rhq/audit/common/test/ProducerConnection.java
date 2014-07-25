@@ -9,22 +9,29 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.rhq.audit.common.test.Endpoint.Type;
 
 public class ProducerConnection {
     private Connection connection;
     private MessageProducer producer;
     private Session session;
 
-    public ProducerConnection(String brokerURL, String queue) throws JMSException {
-        createConnection(brokerURL, queue);
+    public ProducerConnection(String brokerURL, Endpoint endpoint) throws JMSException {
+        createConnection(brokerURL, endpoint);
     }
 
-    protected void createConnection(String brokerURL, String queue) throws JMSException {
+    protected void createConnection(String brokerURL, Endpoint endpoint) throws JMSException {
         ConnectionFactory connFactory = new ActiveMQConnectionFactory(brokerURL);
         Connection conn = connFactory.createConnection();
         conn.start();
         this.session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        Destination dest = session.createQueue("test");
+        Destination dest;
+        if (endpoint.getType() == Type.QUEUE) {
+            dest = session.createQueue(endpoint.getName());
+        } else {
+            dest = session.createTopic(endpoint.getName());
+        }
+
         this.connection = conn;
         this.producer = session.createProducer(dest);
     }
