@@ -11,6 +11,13 @@ import javax.jms.Session;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.rhq.audit.common.test.Endpoint.Type;
 
+/**
+ * Convenience class tests can use to create a consumer of either topic or queue
+ * messages from a broker.
+ * 
+ * The constructor creates the connection and attaches the listener after which
+ * the listener can start consuming messages as they are produced.
+ */
 public class ConsumerConnection {
     private Connection connection;
 

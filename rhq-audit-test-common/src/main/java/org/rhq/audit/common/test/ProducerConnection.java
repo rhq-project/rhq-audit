@@ -11,6 +11,13 @@ import javax.jms.Session;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.rhq.audit.common.test.Endpoint.Type;
 
+/**
+ * Convenience class tests can use to create a producer of either topic or queue
+ * messages.
+ * 
+ * The constructor creates the connection after which you just call sendMessage
+ * to produce a message.
+ */
 public class ProducerConnection {
     private Connection connection;
     private MessageProducer producer;

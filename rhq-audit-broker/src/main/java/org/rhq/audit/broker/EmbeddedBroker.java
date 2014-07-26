@@ -12,7 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides a slim wrapper around the message broker.
+ * Provides a slim wrapper around the message broker. You can simply provide a
+ * config file (either a ActiveMQ .properties or .xml file) to the constructor,
+ * then start/stop the broker.
+ * 
+ * You can start the broker on the command line if you want a standalone broker.
  * 
  * You can subclass this to provide additional functionality around
  * configuration and management of the broker.

@@ -8,6 +8,10 @@ import org.rhq.audit.common.test.Endpoint.Type;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+/**
+ * This test class shows usages of the different Embedded Broker Wrapper objects
+ * as well as the convenience connections for both consumer and producer.
+ */
 @Test
 public class EmbeddedBrokerTest {
     public void testInternalVMBrokerQueue() throws Exception {

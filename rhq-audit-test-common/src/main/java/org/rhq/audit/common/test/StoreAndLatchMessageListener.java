@@ -8,9 +8,10 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
 /**
- * Creates a simple test listener. Logs messages and errors it gets in lists
- * given to it. This listener will notify when it gets a message by counting
- * down a latch.
+ * Creates a simple test listener. This listener will log messages it receives
+ * and errors it encounters in lists given to it via its constructor.
+ * 
+ * This listener will notify when it gets a message by counting down a latch.
  */
 public class StoreAndLatchMessageListener implements MessageListener {
 

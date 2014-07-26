@@ -1,5 +1,9 @@
 package org.rhq.audit.common.test;
 
+/**
+ * POJO that allows tests to indicate the type of endpoint to use (queue or
+ * topic) and that endpoint's name.
+ */
 public class Endpoint {
     public enum Type {
         QUEUE, TOPIC

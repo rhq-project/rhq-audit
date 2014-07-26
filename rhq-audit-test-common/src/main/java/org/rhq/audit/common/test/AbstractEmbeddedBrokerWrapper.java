@@ -2,6 +2,11 @@ package org.rhq.audit.common.test;
 
 import org.rhq.audit.broker.EmbeddedBroker;
 
+/**
+ * Wrapper around an embedded broker. Subclasses provide concrete
+ * implementations using different connectors (e.g. a in-memory broker or a
+ * broker listening on a TCP port).
+ */
 public abstract class AbstractEmbeddedBrokerWrapper {
     private EmbeddedBroker broker;
 
