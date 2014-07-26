@@ -39,7 +39,7 @@ public class AuditRecord {
         this.timestamp = timestamp;
 
         // make our own copy of the details data
-        if (details != null) {
+        if (details != null && !details.isEmpty()) {
             this.details = new HashMap<String, String>(details);
         } else {
             this.details = null;
