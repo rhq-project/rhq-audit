@@ -29,7 +29,8 @@
         <activemq-version>5.10.0</activemq-version>
         <spring-version>2.5.5</spring-version>
         <testng-version>6.5.2</testng-version>
-        <getopt.version>1.0.13</getopt.version>
+        <getopt-version>1.0.13</getopt-version>
+        <gson-version>2.2.4</gson-version>
 
     </properties>
 
@@ -110,7 +111,13 @@
             <dependency>
                 <groupId>gnu.getopt</groupId>
                 <artifactId>java-getopt</artifactId>
-                <version>${getopt.version}</version>
+                <version>${getopt-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson-version}</version>
             </dependency>
 
             <!-- TEST DEPENDENCIES -->
