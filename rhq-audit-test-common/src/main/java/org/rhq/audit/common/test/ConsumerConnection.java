@@ -9,7 +9,8 @@ import javax.jms.MessageListener;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.rhq.audit.common.test.Endpoint.Type;
+import org.rhq.audit.common.Endpoint;
+import org.rhq.audit.common.Endpoint.Type;
 
 /**
  * Convenience class tests can use to create a consumer of either topic or queue

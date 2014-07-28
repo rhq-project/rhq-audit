@@ -28,11 +28,19 @@ public class StoreAndLatchMessageListener implements MessageListener {
     public void onMessage(Message message) {
         try {
             String receivedMessage = ((TextMessage) message).getText();
-            messages.add(receivedMessage);
+            if (messages != null) {
+                messages.add(receivedMessage);
+            }
         } catch (Exception e) {
-            errors.add(e.toString());
+            if (errors != null) {
+                errors.add(e.toString());
+            } else {
+                e.printStackTrace();
+            }
         } finally {
-            latch.countDown();
+            if (latch != null) {
+                latch.countDown();
+            }
         }
     }
 }

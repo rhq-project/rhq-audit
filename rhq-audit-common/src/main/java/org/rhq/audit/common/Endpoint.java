@@ -1,8 +1,8 @@
-package org.rhq.audit.common.test;
+package org.rhq.audit.common;
 
 /**
- * POJO that allows tests to indicate the type of endpoint to use (queue or
- * topic) and that endpoint's name.
+ * POJO that indicates the type of endpoint to use (queue or topic) and that
+ * queue or topic's name.
  */
 public class Endpoint {
     public enum Type {
@@ -29,6 +29,11 @@ public class Endpoint {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return "{" + type.name() + "}" + name;
     }
 
 }

@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.rhq.audit.common.test.Endpoint.Type;
+import org.rhq.audit.common.Endpoint;
+import org.rhq.audit.common.Endpoint.Type;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
