@@ -32,6 +32,8 @@ public class JSONTest {
         details.put("secondkey", "secondval");
 
         AuditRecord arec = new AuditRecord("my msg", new Subsystem("FOO"), details, 12345L);
+        arec.setMessageId("12345");
+        arec.setCorrelationId("67890");
         String json = arec.toJSON();
         System.out.println(json);
         Assert.assertNotNull(json, "missing JSON");
@@ -39,6 +41,8 @@ public class JSONTest {
         AuditRecord arec2 = AuditRecord.fromJSON(json);
         Assert.assertNotNull(arec2, "JSON conversion failed");
         Assert.assertNotSame(arec, arec2);
+        Assert.assertNull(arec2.getMessageId(), "Message ID should not be encoded in JSON");
+        Assert.assertNull(arec2.getCorrelationId(), "Correlation ID should not be encoded in JSON");
         Assert.assertEquals(arec2.getMessage(), "my msg");
         Assert.assertEquals(arec2.getSubsystem().getName(), "FOO");
         Assert.assertEquals(arec2.getTimestamp(), 12345L);

@@ -1,5 +1,7 @@
 package org.rhq.audit.common;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Identifies the name of an audited subsystem.
  */
@@ -7,6 +9,7 @@ public class Subsystem {
     // a generic catch-all subsystem
     public static final Subsystem MISCELLANEOUS = new Subsystem("MISC");
 
+    @Expose
     private final String name;
 
     public Subsystem(String name) {

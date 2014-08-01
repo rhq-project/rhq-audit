@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AuditRecordProcessor {
 
-    protected final Logger log = LoggerFactory.getLogger(AuditRecordProcessor.class);
+    private final Logger log = LoggerFactory.getLogger(AuditRecordProcessor.class);
     protected final ConnectionFactory connectionFactory;
     private Connection connection;
 

@@ -22,8 +22,14 @@ public abstract class AuditRecordListener implements MessageListener {
         AuditRecord auditRecord;
 
         try {
-            String receivedMessage = ((TextMessage) message).getText();
-            auditRecord = AuditRecord.fromJSON(receivedMessage);
+            String receivedBody = ((TextMessage) message).getText();
+            auditRecord = AuditRecord.fromJSON(receivedBody);
+
+            // grab some headers and put them in the audit record
+            auditRecord.setMessageId(message.getJMSMessageID());
+            auditRecord.setCorrelationId(message.getJMSCorrelationID());
+
+            log.trace("Received audit record: {}", auditRecord);
         } catch (JMSException e) {
             log.error("A message was received that was not a valid text message");
             return;
