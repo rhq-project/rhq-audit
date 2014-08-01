@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import junit.framework.Assert;
 
 import org.rhq.audit.common.AuditRecord;
+import org.rhq.audit.common.MessageId;
 import org.rhq.audit.common.Subsystem;
 import org.rhq.audit.common.test.AbstractEmbeddedBrokerWrapper;
 import org.rhq.audit.common.test.VMEmbeddedBrokerWrapper;
@@ -83,7 +84,7 @@ public class AuditRecordConsumerTest {
         consumer.listen(Subsystem.MISCELLANEOUS, listener);
 
         // send some audit records, correlate the everything to the first one
-        String firstMessageId = null;
+        MessageId firstMessageId = null;
         for (int i = 0; i < numberOfTestRecords; i++) {
             AuditRecord auditRecord = new AuditRecord("test message#" + i, Subsystem.MISCELLANEOUS);
             if (firstMessageId != null) {

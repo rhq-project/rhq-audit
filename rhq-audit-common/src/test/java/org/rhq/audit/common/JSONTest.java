@@ -32,8 +32,8 @@ public class JSONTest {
         details.put("secondkey", "secondval");
 
         AuditRecord arec = new AuditRecord("my msg", new Subsystem("FOO"), details, 12345L);
-        arec.setMessageId("12345");
-        arec.setCorrelationId("67890");
+        arec.setMessageId(new MessageId("12345"));
+        arec.setCorrelationId(new MessageId("67890"));
         String json = arec.toJSON();
         System.out.println(json);
         Assert.assertNotNull(json, "missing JSON");

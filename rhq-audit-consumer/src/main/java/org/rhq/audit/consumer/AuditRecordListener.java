@@ -6,6 +6,7 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
 import org.rhq.audit.common.AuditRecord;
+import org.rhq.audit.common.MessageId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,15 +27,17 @@ public abstract class AuditRecordListener implements MessageListener {
             auditRecord = AuditRecord.fromJSON(receivedBody);
 
             // grab some headers and put them in the audit record
-            auditRecord.setMessageId(message.getJMSMessageID());
-            auditRecord.setCorrelationId(message.getJMSCorrelationID());
+            auditRecord.setMessageId(new MessageId(message.getJMSMessageID()));
+            if (message.getJMSCorrelationID() != null) {
+                auditRecord.setCorrelationId(new MessageId(message.getJMSCorrelationID()));
+            }
 
             log.trace("Received audit record: {}", auditRecord);
         } catch (JMSException e) {
-            log.error("A message was received that was not a valid text message");
+            log.error("A message was received that was not a valid text message", e);
             return;
         } catch (Exception e) {
-            log.error("A message was received that was not a valid JSON-encoded AuditRecord");
+            log.error("A message was received that was not a valid JSON-encoded AuditRecord", e);
             return;
         }
 

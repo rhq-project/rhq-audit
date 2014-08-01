@@ -37,8 +37,8 @@ import com.google.gson.annotations.Expose;
 public class AuditRecord {
     // these are passed out-of-band of the message body - these attributes will
     // therefore not be JSON encoded
-    private String messageId;
-    private String correlationId;
+    private MessageId messageId;
+    private MessageId correlationId;
 
     // these attributes make up the message body of the audit record, so these
     // will be exposed to the JSON output
@@ -89,19 +89,19 @@ public class AuditRecord {
         }
     }
 
-    public String getMessageId() {
+    public MessageId getMessageId() {
         return messageId;
     }
 
-    public void setMessageId(String messageId) {
+    public void setMessageId(MessageId messageId) {
         this.messageId = messageId;
     }
 
-    public String getCorrelationId() {
+    public MessageId getCorrelationId() {
         return correlationId;
     }
 
-    public void setCorrelationId(String correlationId) {
+    public void setCorrelationId(MessageId correlationId) {
         this.correlationId = correlationId;
     }
 

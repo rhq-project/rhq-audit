@@ -2,6 +2,7 @@ package org.rhq.audit.producer;
 
 import org.junit.Assert;
 import org.rhq.audit.common.AuditRecord;
+import org.rhq.audit.common.MessageId;
 import org.rhq.audit.common.Subsystem;
 import org.rhq.audit.common.test.AbstractEmbeddedBrokerWrapper;
 import org.rhq.audit.common.test.VMEmbeddedBrokerWrapper;
@@ -39,7 +40,7 @@ public class AuditRecordProducerTest {
         AuditRecord auditRecord;
         auditRecord = new AuditRecord("test message", Subsystem.MISCELLANEOUS);
         Assert.assertNull(auditRecord.getMessageId());
-        String messageId = producer.sendAuditRecord(auditRecord);
+        MessageId messageId = producer.sendAuditRecord(auditRecord);
         Assert.assertNotNull(messageId);
         Assert.assertEquals(messageId, auditRecord.getMessageId());
     }

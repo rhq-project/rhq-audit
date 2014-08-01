@@ -10,6 +10,7 @@ import javax.jms.Session;
 import org.rhq.audit.common.AuditRecord;
 import org.rhq.audit.common.AuditRecordProcessor;
 import org.rhq.audit.common.ConnectionContext;
+import org.rhq.audit.common.MessageId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class AuditRecordProducer extends AuditRecordProcessor {
      * @return the message ID
      * @throws JMSException
      */
-    public String sendAuditRecord(AuditRecord auditRecord) throws JMSException {
+    public MessageId sendAuditRecord(AuditRecord auditRecord) throws JMSException {
         // create the JMS message to be sent
         ProducerConnectionContext context = createConnectionContext(auditRecord);
         Message msg = createMessage(context, auditRecord);
@@ -49,7 +50,7 @@ public class AuditRecordProducer extends AuditRecordProcessor {
         // if the auditRecord is correlated with another, put the correlation ID
         // in the Message to be sent
         if (auditRecord.getCorrelationId() != null) {
-            msg.setJMSCorrelationID(auditRecord.getCorrelationId());
+            msg.setJMSCorrelationID(auditRecord.getCorrelationId().toString());
         }
 
         if (auditRecord.getMessageId() != null) {
@@ -62,7 +63,7 @@ public class AuditRecordProducer extends AuditRecordProcessor {
 
         // put message ID into the auditRecord in case the caller wants to
         // correlate it with another record
-        String messageId = msg.getJMSMessageID();
+        MessageId messageId = new MessageId(msg.getJMSMessageID());
         auditRecord.setMessageId(messageId);
 
         return messageId;
