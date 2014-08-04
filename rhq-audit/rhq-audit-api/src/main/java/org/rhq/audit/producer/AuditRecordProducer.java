@@ -1,6 +1,5 @@
 package org.rhq.audit.producer;
 
-import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -78,17 +77,7 @@ public class AuditRecordProducer extends AuditRecordProcessor {
      */
     protected ProducerConnectionContext createConnectionContext(AuditRecord auditRecord) throws JMSException {
         ProducerConnectionContext context = new ProducerConnectionContext();
-        // reuse our connection - creating one only if there is no existing connection yet
-        Connection conn = getConnection();
-        if (conn != null) {
-            context.setConnection(conn);
-        } else {
-            createConnection(context);
-            conn = context.getConnection();
-            setConnection(conn);
-            conn.start(); // start it immediately so the caller doesn't have to
-        }
-
+        createOrReuseConnection(context, true);
         createSession(context);
         createDestination(context, getEndpointFromAuditRecord(auditRecord));
         createProducer(context);

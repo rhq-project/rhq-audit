@@ -1,6 +1,5 @@
 package org.rhq.audit.consumer;
 
-import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
@@ -48,17 +47,7 @@ public class AuditRecordConsumer extends AuditRecordProcessor {
      */
     protected ConsumerConnectionContext createConnectionContext(Subsystem subsystem) throws JMSException {
         ConsumerConnectionContext context = new ConsumerConnectionContext();
-        // reuse our connection - creating one only if there is no existing connection yet
-        Connection conn = getConnection();
-        if (conn != null) {
-            context.setConnection(conn);
-        } else {
-            createConnection(context);
-            conn = context.getConnection();
-            setConnection(conn);
-            conn.start(); // start it immediately so the caller doesn't have to
-        }
-
+        createOrReuseConnection(context, true);
         createSession(context);
         createDestination(context, getEndpointFromSubsystem(subsystem));
         createConsumer(context);

@@ -63,13 +63,17 @@ public abstract class AbstractMessageProcessor {
      * <b>not</b> set this processor's connection - that method only creates the
      * connection and puts that connection in the context. It does not save that
      * connection in this processor object. You must explicitly set the
-     * connection via this method if you want that connection cached here.
+     * connection via this method if you want that connection cached here. See
+     * also {@link #createOrReuseConnection(ConnectionContext, boolean)}.
      * 
      * @param connection
+     * 
+     * @see #createOrReuseConnection(ConnectionContext, boolean)
      */
     protected void setConnection(Connection connection) {
         if (this.connection != null) {
             try {
+                // make sure it is closed to free up any resources it was using
                 this.connection.close();
             } catch (JMSException e) {
                 log.error("Cannot close the previous connection; memory might leak.", e);
@@ -79,19 +83,56 @@ public abstract class AbstractMessageProcessor {
     }
 
     /**
+     * This method provides a way to cache and share a connection across
+     * multiple contexts. It combines the creation and setting of the
+     * connection. This also can optionally start the connection immediately.
+     * Use this if you want to reuse any connection that may already be stored
+     * in this processor object (i.e. {@link #getConnection()} is non-null). If
+     * there is no connection yet, one will be created. Whether the connection
+     * is created or reused, that connection will be stored in the given
+     * context.
+     * 
+     * @param context
+     *            the connection will be stored in this context
+     * @param start
+     *            if true, the created connection will be started.
+     * @throws JMSException
+     */
+    protected void createOrReuseConnection(ConnectionContext context, boolean start) throws JMSException {
+        Connection conn = getConnection();
+        if (conn != null) {
+            // already have a connection cached, give it to the context
+            context.setConnection(conn);
+        } else {
+            // there is no connection yet; create it and cache it
+            createConnection(context);
+            conn = context.getConnection();
+            setConnection(conn);
+        }
+
+        if (start) {
+            conn.start(); // calling start on started connection is ignored
+        }
+    }
+
+    /**
      * Creates a connection using this object's connection factory and stores
      * that connection in the given context object.
      * 
      * NOTE: this does <b>not</b> set the connection in this processor object.
      * If the caller wants the created connection cached in this processor
      * object, {@link #setConnection(Connection)} must be passed the connection
-     * found in the context after this method returns.
+     * found in the context after this method returns. See also
+     * {@link #createOrReuseConnection(ConnectionContext, boolean).
      * 
      * @param context
      *            the context where the new connection is stored
      * @throws JMSException
      * @throws NullPointerException
      *             if the context is null
+     * 
+     * @see #createOrReuseConnection(ConnectionContext, boolean)
+     * @see #setConnection(Connection)
      */
     protected void createConnection(ConnectionContext context) throws JMSException {
         if (context == null) {
