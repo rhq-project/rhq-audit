@@ -5,15 +5,11 @@ import javax.jms.JMSException;
 import org.rhq.msg.common.AbstractMessageProcessor;
 import org.rhq.msg.common.Endpoint;
 import org.rhq.msg.common.Endpoint.Type;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Superclass that provides some functionality to process audit records.
  */
 public abstract class AuditRecordProcessor extends AbstractMessageProcessor {
-
-    private final Logger log = LoggerFactory.getLogger(AuditRecordProcessor.class);
 
     public AuditRecordProcessor(String brokerURL) throws JMSException {
         super(brokerURL);

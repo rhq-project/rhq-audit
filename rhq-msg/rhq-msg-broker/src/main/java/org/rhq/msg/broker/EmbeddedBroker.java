@@ -127,8 +127,7 @@ public class EmbeddedBroker {
             }
 
             case 1: {
-                // this will catch non-option arguments (which we don't
-                // currently care about)
+                // this will catch non-option arguments (which we don't currently care about)
                 System.err.println("Unused argument: " + getopt.getOptarg());
                 break;
             }
@@ -171,8 +170,7 @@ public class EmbeddedBroker {
 
         InitializationParameters initParamsFromArguments = new InitializationParameters();
 
-        // help the user out - if they gave a file without the proper prefix,
-        // add the prefix for them
+        // help the user out - if they gave a file without the proper prefix, add the prefix for them
         if (configFileArg.endsWith(".properties") && !configFileArg.startsWith("properties:")) {
             configFileArg = "properties:" + configFileArg;
         } else if (configFileArg.endsWith(".xml") && !configFileArg.startsWith("xbean:")) {

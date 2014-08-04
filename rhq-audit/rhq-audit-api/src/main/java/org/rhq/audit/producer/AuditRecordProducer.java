@@ -48,8 +48,7 @@ public class AuditRecordProducer extends AuditRecordProcessor {
         ProducerConnectionContext context = createConnectionContext(auditRecord);
         Message msg = createMessage(context, auditRecord);
 
-        // if the auditRecord is correlated with another, put the correlation ID
-        // in the Message to be sent
+        // if the auditRecord is correlated with another, put the correlation ID in the Message to be sent
         if (auditRecord.getCorrelationId() != null) {
             msg.setJMSCorrelationID(auditRecord.getCorrelationId().toString());
         }
@@ -62,8 +61,7 @@ public class AuditRecordProducer extends AuditRecordProcessor {
         // now send the message to the broker
         context.getMessageProducer().send(msg);
 
-        // put message ID into the auditRecord in case the caller wants to
-        // correlate it with another record
+        // put message ID into the auditRecord in case the caller wants to correlate it with another record
         MessageId messageId = new MessageId(msg.getJMSMessageID());
         auditRecord.setMessageId(messageId);
 
@@ -80,8 +78,7 @@ public class AuditRecordProducer extends AuditRecordProcessor {
      */
     protected ProducerConnectionContext createConnectionContext(AuditRecord auditRecord) throws JMSException {
         ProducerConnectionContext context = new ProducerConnectionContext();
-        // reuse our connection - creating one only if there is no existing
-        // connection yet
+        // reuse our connection - creating one only if there is no existing connection yet
         Connection conn = getConnection();
         if (conn != null) {
             context.setConnection(conn);

@@ -48,8 +48,7 @@ public class AuditRecordConsumer extends AuditRecordProcessor {
      */
     protected ConsumerConnectionContext createConnectionContext(Subsystem subsystem) throws JMSException {
         ConsumerConnectionContext context = new ConsumerConnectionContext();
-        // reuse our connection - creating one only if there is no existing
-        // connection yet
+        // reuse our connection - creating one only if there is no existing connection yet
         Connection conn = getConnection();
         if (conn != null) {
             context.setConnection(conn);
