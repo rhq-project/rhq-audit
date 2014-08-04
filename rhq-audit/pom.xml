@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.rhq.audit</groupId>
+    <artifactId>rhq-audit-parent</artifactId>
+    <version>0.2</version>
+    <packaging>pom</packaging>
+    <name>RHQ Audit Parent</name>
+    <inceptionYear>2014</inceptionYear>
+
+    <properties>
+        <rhq-msg-version>0.1</rhq-msg-version>
+    </properties>
+
+    <modules>
+        <module>rhq-audit-api</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- the rhq-msg parent pom so we can pick up the versions it uses in its dependency management section -->
+            <dependency>
+                <groupId>org.rhq.msg</groupId>
+                <artifactId>rhq-msg-parent</artifactId>
+                <version>${rhq-msg-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.rhq.msg</groupId>
+                <artifactId>rhq-msg-common</artifactId>
+                <version>${rhq-msg-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.rhq.msg</groupId>
+                <artifactId>rhq-msg-test-common</artifactId>
+                <version>${rhq-msg-version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>JBoss.org Public-JBoss NEXUS Repo</id>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>JBoss.org Public NEXUS Repo</id>
+            <url>http://repository.jboss.org/nexus/content/groups/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+    </repositories>
+
+</project>
+
