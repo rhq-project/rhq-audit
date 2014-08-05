@@ -1,9 +1,12 @@
 package org.rhq.msg.common.test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.rhq.msg.common.BasicMessage;
 import org.rhq.msg.common.Endpoint;
 import org.rhq.msg.common.Endpoint.Type;
 import org.testng.Assert;
@@ -38,8 +41,12 @@ public class EmbeddedBrokerTest {
             String brokerURL = broker.getBrokerURL();
 
             // test that messages can flow to the given broker
+            Map<String, String> details = new HashMap<String, String>();
+            details.put("key1", "val1");
+            details.put("secondkey", "secondval");
+            BasicMessage basicMessage = new BasicMessage("Hello World!", details);
+
             CountDownLatch latch = new CountDownLatch(1);
-            String testMessage = "Hello World!";
             ArrayList<String> receivedMessages = new ArrayList<String>();
             ArrayList<String> errors = new ArrayList<String>();
 
@@ -49,7 +56,7 @@ public class EmbeddedBrokerTest {
 
             // start the producer
             ProducerConnection producerConnection = new ProducerConnection(brokerURL, endpoint);
-            producerConnection.sendMessage(testMessage);
+            producerConnection.sendMessage(basicMessage.toJSON());
 
             // wait for the message to flow
             boolean gotMessage = latch.await(5, TimeUnit.SECONDS);
@@ -64,7 +71,9 @@ public class EmbeddedBrokerTest {
             // make sure the message flowed properly
             Assert.assertTrue(errors.isEmpty(), "Failed to send message propertly: " + errors);
             Assert.assertEquals(receivedMessages.size(), 1, "Didn't receive message: " + receivedMessages);
-            Assert.assertEquals(receivedMessages.get(0), testMessage);
+            BasicMessage receivedBasicMessage = BasicMessage.fromJSON(receivedMessages.get(0), BasicMessage.class);
+            Assert.assertEquals(receivedBasicMessage.getMessage(), basicMessage.getMessage());
+            Assert.assertEquals(receivedBasicMessage.getDetails(), basicMessage.getDetails());
         } finally {
             broker.stop();
         }

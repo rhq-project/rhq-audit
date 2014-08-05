@@ -1,66 +1,30 @@
 package org.rhq.audit.common;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.Expose;
+import org.rhq.msg.common.BasicMessage;
 
-import org.rhq.msg.common.MessageId;
+import com.google.gson.annotations.Expose;
 
 /**
  * Information about an audited event.
  * 
- * <ul>
- * <li>Message = a description of what happened; typically just a human readable
- * string.</li>
- * <li>Subsystem = identifies in which subsystem the event occurred. If not
- * specified, {@link Subsystem#MISCELLANEOUS} is used.</li>
- * <li>Timestamp = identified when the event occurred. If not specified, the
- * current time is used. Note this is not representative of when this
- * AuditRecord was sent to the backend store. This is supposed to identify when
- * the actual audited event happened.</li>
- * <li>Details = Additional name/value pairs of data that further provide
- * details on the audited event.</li>
- * </ul>
+ * A {@link #getSubsystem() subsystem} identifies in which subsystem the event occurred. If not specified,
+ * {@link Subsystem#MISCELLANEOUS} is used.
  * 
- * The {@link #getMessageId() message ID} is assigned by the messaging system
- * and so should not be explicitly set.
+ * The {@link #getTimestamp() timestamp} identifies when the event occurred. If not specified, the current time is used.
+ * Note this is not representative of when this AuditRecord was sent to the backend store. This is supposed to identify
+ * when the actual audited event happened.
  * 
- * The {@link #getCorrelationId() correlation ID} is a message ID of another
- * AuditRecord that was sent previously. This is usually left unset unless this
- * AuditRecord needs to be correlated with another AuditRecord (as an example,
- * you can correlate a "Stopped" audit event with a "Stopping" event to record
- * when a process stopped and correlate that to when that process began to
- * stop).
  */
-public class AuditRecord {
-    // these are passed out-of-band of the message body - these attributes will
-    // therefore not be JSON encoded
-    private MessageId messageId;
-    private MessageId correlationId;
-
-    // these attributes make up the message body of the audit record, so these
-    // will be exposed to the JSON output
-    @Expose
-    private final String message;
+public class AuditRecord extends BasicMessage {
     @Expose
     private final Subsystem subsystem;
-    @Expose
-    private final Map<String, String> details;
     @Expose
     private final long timestamp;
 
     public static AuditRecord fromJSON(String json) {
-        final Gson gson = createGsonBuilder();
-        return gson.fromJson(json, AuditRecord.class);
-    }
-
-    public String toJSON() {
-        final Gson gson = createGsonBuilder();
-        return gson.toJson(this);
+        return BasicMessage.fromJSON(json, AuditRecord.class);
     }
 
     public AuditRecord(String message, Subsystem subsystem) {
@@ -71,7 +35,13 @@ public class AuditRecord {
         this(message, subsystem, details, 0);
     }
 
+    public AuditRecord(String message, Subsystem subsystem, long timestamp) {
+        this(message, subsystem, null, timestamp);
+    }
+
     public AuditRecord(String message, Subsystem subsystem, Map<String, String> details, long timestamp) {
+        super(message, details);
+
         if (subsystem == null) {
             subsystem = Subsystem.MISCELLANEOUS;
         }
@@ -79,68 +49,15 @@ public class AuditRecord {
             timestamp = System.currentTimeMillis();
         }
 
-        this.message = message;
         this.subsystem = subsystem;
         this.timestamp = timestamp;
-
-        // make our own copy of the details data
-        if (details != null && !details.isEmpty()) {
-            this.details = new HashMap<String, String>(details);
-        } else {
-            this.details = null;
-        }
-    }
-
-    public MessageId getMessageId() {
-        return messageId;
-    }
-
-    public void setMessageId(MessageId messageId) {
-        this.messageId = messageId;
-    }
-
-    public MessageId getCorrelationId() {
-        return correlationId;
-    }
-
-    public void setCorrelationId(MessageId correlationId) {
-        this.correlationId = correlationId;
-    }
-
-    public String getMessage() {
-        return message;
     }
 
     public Subsystem getSubsystem() {
         return subsystem;
     }
 
-    public Map<String, String> getDetails() {
-        if (details == null) {
-            return null;
-        }
-        return Collections.unmodifiableMap(details);
-    }
-
     public long getTimestamp() {
         return timestamp;
     }
-
-    @Override
-    public String toString() {
-        StringBuilder str = new StringBuilder("AuditRecord: [");
-        str.append("message-id=");
-        str.append(getMessageId());
-        str.append(", correlation-id=");
-        str.append(getCorrelationId());
-        str.append(", json-body=[");
-        str.append(toJSON());
-        str.append("]]");
-        return str.toString();
-    }
-
-    protected static Gson createGsonBuilder() {
-        return new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-    }
-
 }
