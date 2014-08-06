@@ -2,17 +2,17 @@ package org.rhq.audit.common;
 
 import javax.jms.JMSException;
 
-import org.rhq.msg.common.AbstractMessageProcessor;
 import org.rhq.msg.common.Endpoint;
 import org.rhq.msg.common.Endpoint.Type;
 import org.rhq.msg.common.MessageId;
+import org.rhq.msg.common.MessageProcessor;
 import org.rhq.msg.common.consumer.BasicMessageListener;
 import org.rhq.msg.common.producer.ProducerConnectionContext;
 
 /**
  * Consumes and produces audit records.
  */
-public class AuditRecordProcessor extends AbstractMessageProcessor {
+public class AuditRecordProcessor extends MessageProcessor {
 
     public AuditRecordProcessor(String brokerURL) throws JMSException {
         super(brokerURL);

@@ -17,10 +17,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Superclass that provides some functionality to connect and process messages, both as a producer or consumer. This
- * class gives you methods to create destinations, sessions, and connections. This class can cache a connection that can
- * then be used to share across multiple {@link ConnectionContext} objects. See
- * {@link #createOrReuseConnection(ConnectionContext, boolean)}.
+ * Provides some functionality to connect and process messages, both as a producer or consumer. This class gives you
+ * methods to create destinations, sessions, and connections. This class can cache a connection that can then be used to
+ * share across multiple {@link ConnectionContext} objects. See
+ * {@link #createOrReuseConnection(ConnectionContext, boolean)}. Subclasses are free to extend this class to add or
+ * override functionality or to provides stricter type-checking.
  * 
  * The usage pattern is to create this object with a URL to the broker. Then you create connection contexts (either of
  * the {@link ProducerConnectionContext producer} or {@link ConsumerConnectionContext consumer} variety) and pass those
@@ -29,13 +30,13 @@ import org.slf4j.LoggerFactory;
  * {@link #send(ProducerConnectionContext, BasicMessage)}. When you are done listening or sending, call {@link #close()}
  * .
  */
-public abstract class AbstractMessageProcessor {
+public class MessageProcessor {
 
-    private final Logger log = LoggerFactory.getLogger(AbstractMessageProcessor.class);
+    private final Logger log = LoggerFactory.getLogger(MessageProcessor.class);
     protected final ConnectionFactory connectionFactory;
     private Connection connection;
 
-    public AbstractMessageProcessor(String brokerURL) throws JMSException {
+    public MessageProcessor(String brokerURL) throws JMSException {
         connectionFactory = new ActiveMQConnectionFactory(brokerURL);
         log.debug("{} has been created: {}", this.getClass().getSimpleName(), brokerURL);
     }
