@@ -52,7 +52,7 @@ public abstract class BasicMessageListener<T extends BasicMessage> implements Me
             String receivedBody = ((TextMessage) message).getText();
             basicMessage = BasicMessage.fromJSON(receivedBody, getBasicMessageClass());
 
-            // grab some headers and put them in the audit record
+            // grab some headers and put them in the message
             basicMessage.setMessageId(new MessageId(message.getJMSMessageID()));
             if (message.getJMSCorrelationID() != null) {
                 basicMessage.setCorrelationId(new MessageId(message.getJMSCorrelationID()));
