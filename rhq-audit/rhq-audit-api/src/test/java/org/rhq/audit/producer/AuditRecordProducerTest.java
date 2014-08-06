@@ -1,6 +1,7 @@
 package org.rhq.audit.producer;
 
 import org.rhq.audit.common.AuditRecord;
+import org.rhq.audit.common.AuditRecordProcessor;
 import org.rhq.audit.common.Subsystem;
 import org.rhq.msg.common.MessageId;
 import org.rhq.msg.common.test.AbstractEmbeddedBrokerWrapper;
@@ -13,7 +14,7 @@ import org.testng.annotations.Test;
 @Test
 public class AuditRecordProducerTest {
 
-    private AuditRecordProducer producer;
+    private AuditRecordProcessor producer;
     private AbstractEmbeddedBrokerWrapper broker;
 
     @BeforeMethod
@@ -21,7 +22,7 @@ public class AuditRecordProducerTest {
         broker = new VMEmbeddedBrokerWrapper();
         broker.start();
         String brokerURL = broker.getBrokerURL();
-        producer = new AuditRecordProducer(brokerURL);
+        producer = new AuditRecordProcessor(brokerURL);
     }
 
     @AfterMethod

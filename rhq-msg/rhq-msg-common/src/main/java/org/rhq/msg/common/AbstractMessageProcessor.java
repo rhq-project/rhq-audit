@@ -10,6 +10,7 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.rhq.msg.common.consumer.BasicMessageListener;
 import org.rhq.msg.common.consumer.ConsumerConnectionContext;
 import org.rhq.msg.common.producer.ProducerConnectionContext;
 import org.slf4j.Logger;
@@ -20,6 +21,13 @@ import org.slf4j.LoggerFactory;
  * class gives you methods to create destinations, sessions, and connections. This class can cache a connection that can
  * then be used to share across multiple {@link ConnectionContext} objects. See
  * {@link #createOrReuseConnection(ConnectionContext, boolean)}.
+ * 
+ * The usage pattern is to create this object with a URL to the broker. Then you create connection contexts (either of
+ * the {@link ProducerConnectionContext producer} or {@link ConsumerConnectionContext consumer} variety) and pass those
+ * contexts to this object in order to consume messages via
+ * {@link #listen(ConsumerConnectionContext, BasicMessageListener)} or produce messages via
+ * {@link #send(ProducerConnectionContext, BasicMessage)}. When you are done listening or sending, call {@link #close()}
+ * .
  */
 public abstract class AbstractMessageProcessor {
 
@@ -33,8 +41,61 @@ public abstract class AbstractMessageProcessor {
     }
 
     /**
-     * This method should be called when this processor is no longer needed.
-     * This will free up resources and close any open connection.
+     * Listens for messages.
+     * 
+     * @param context
+     *            information that determines where to listen
+     * @param listener
+     *            the listener that processes the incoming messages that come over the endpoint
+     * @throws JMSException
+     * 
+     * @see {@link #createConsumerConnectionContext(Endpoint)}
+     */
+    public <T extends BasicMessage> void listen(ConsumerConnectionContext context, BasicMessageListener<T> listener) throws JMSException {
+        MessageConsumer consumer = context.getMessageConsumer();
+        consumer.setMessageListener(listener);
+    }
+
+    /**
+     * Send the given message to its destinations across the message bus. Once sent, the message will get assigned a
+     * generated message ID. That message ID will also be returned by this method.
+     * 
+     * @param context
+     *            information that determines where the message is sent
+     * @param basicMessage
+     *            the message to send
+     * @return the message ID
+     * @throws JMSException
+     * 
+     * @see {@link #createProducerConnectionContext(Endpoint)}
+     */
+    public MessageId send(ProducerConnectionContext context, BasicMessage basicMessage) throws JMSException {
+        // create the JMS message to be sent
+        Message msg = createMessage(context, basicMessage);
+
+        // if the message is correlated with another, put the correlation ID in the Message to be sent
+        if (basicMessage.getCorrelationId() != null) {
+            msg.setJMSCorrelationID(basicMessage.getCorrelationId().toString());
+        }
+
+        if (basicMessage.getMessageId() != null) {
+            log.debug("Non-null message ID [{}] will be ignored and a new one generated", basicMessage.getMessageId());
+            basicMessage.setMessageId(null);
+        }
+
+        // now send the message to the broker
+        context.getMessageProducer().send(msg);
+
+        // put message ID into the message in case the caller wants to correlate it with another record
+        MessageId messageId = new MessageId(msg.getJMSMessageID());
+        basicMessage.setMessageId(messageId);
+
+        return messageId;
+    }
+
+    /**
+     * This method should be called when this processor is no longer needed. This will free up resources and close any
+     * open connection.
      * 
      * @throws JMSException
      */
@@ -316,5 +377,4 @@ public abstract class AbstractMessageProcessor {
         createConsumer(context);
         return context;
     }
-
 }

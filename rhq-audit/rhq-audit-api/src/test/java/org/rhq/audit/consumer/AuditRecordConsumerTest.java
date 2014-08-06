@@ -5,8 +5,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.rhq.audit.common.AuditRecord;
+import org.rhq.audit.common.AuditRecordProcessor;
 import org.rhq.audit.common.Subsystem;
-import org.rhq.audit.producer.AuditRecordProducer;
 import org.rhq.msg.common.MessageId;
 import org.rhq.msg.common.test.AbstractEmbeddedBrokerWrapper;
 import org.rhq.msg.common.test.StoreAndLatchBasicMessageListener;
@@ -20,16 +20,16 @@ import org.testng.annotations.Test;
 public class AuditRecordConsumerTest {
 
     private AbstractEmbeddedBrokerWrapper broker;
-    private AuditRecordProducer producer;
-    private AuditRecordConsumer consumer;
+    private AuditRecordProcessor producer;
+    private AuditRecordProcessor consumer;
 
     @BeforeMethod
     public void setupProducerAndConsumer() throws Exception {
         broker = new VMEmbeddedBrokerWrapper();
         broker.start();
         String brokerURL = broker.getBrokerURL();
-        producer = new AuditRecordProducer(brokerURL);
-        consumer = new AuditRecordConsumer(brokerURL);
+        producer = new AuditRecordProcessor(brokerURL);
+        consumer = new AuditRecordProcessor(brokerURL);
     }
 
     @AfterMethod

@@ -5,15 +5,41 @@ import javax.jms.JMSException;
 import org.rhq.msg.common.AbstractMessageProcessor;
 import org.rhq.msg.common.Endpoint;
 import org.rhq.msg.common.Endpoint.Type;
+import org.rhq.msg.common.MessageId;
+import org.rhq.msg.common.consumer.BasicMessageListener;
+import org.rhq.msg.common.producer.ProducerConnectionContext;
 
 /**
- * Superclass that provides some functionality to process audit records. This can be the superclass to either a consumer
- * or producer.
+ * Consumes and produces audit records.
  */
-public abstract class AuditRecordProcessor extends AbstractMessageProcessor {
+public class AuditRecordProcessor extends AbstractMessageProcessor {
 
     public AuditRecordProcessor(String brokerURL) throws JMSException {
         super(brokerURL);
+    }
+
+    /**
+     * Send the given audit record.
+     * 
+     * @param auditRecord
+     *            the record to send
+     * @return the message ID
+     * @throws JMSException
+     */
+    public MessageId sendAuditRecord(AuditRecord auditRecord) throws JMSException {
+        ProducerConnectionContext context = createProducerConnectionContext(getEndpoint());
+        return send(context, auditRecord);
+    }
+
+    /**
+     * Listens for audit records.
+     * 
+     * @param listener
+     *            the listener that processes the incoming audit records
+     * @throws JMSException
+     */
+    public void listen(BasicMessageListener<AuditRecord> listener) throws JMSException {
+        listen(createConsumerConnectionContext(getEndpoint()), listener);
     }
 
     /**
