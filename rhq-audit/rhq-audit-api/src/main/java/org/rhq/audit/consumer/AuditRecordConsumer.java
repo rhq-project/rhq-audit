@@ -1,9 +1,7 @@
 package org.rhq.audit.consumer;
 
-import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
-import javax.jms.Session;
 
 import org.rhq.audit.common.AuditRecord;
 import org.rhq.audit.common.AuditRecordProcessor;
@@ -34,51 +32,20 @@ public class AuditRecordConsumer extends AuditRecordProcessor {
      * @throws JMSException
      */
     public void listen(Subsystem subsystem, BasicMessageListener<AuditRecord> listener) throws JMSException {
-        ConsumerConnectionContext context = createConnectionContext(subsystem);
+        ConsumerConnectionContext context = createConsumerConnectionContext(subsystem);
         MessageConsumer consumer = context.getMessageConsumer();
         consumer.setMessageListener(listener);
     }
 
     /**
-     * Creates a new connection context, reusing any existing connection that
-     * might have already been created.
+     * Creates a new connection context, reusing any existing connection that might have already been created. The
+     * endpoint of the session is dictated by the given subsystem (each subsystem has its own endpoint).
      * 
      * @param subsystem
      * @return the context fully populated
      * @throws JMSException
      */
-    protected ConsumerConnectionContext createConnectionContext(Subsystem subsystem) throws JMSException {
-        ConsumerConnectionContext context = new ConsumerConnectionContext();
-        createOrReuseConnection(context, true);
-        createSession(context);
-        createDestination(context, getEndpointFromSubsystem(subsystem));
-        createConsumer(context);
-        return context;
-    }
-
-    /**
-     * Creates a message consumer using the context's session and destination.
-     * 
-     * @param context
-     *            the context where the new consumer is stored
-     * @throws JMSException
-     * @throws NullPointerException
-     *             if the context is null or the context's session is null or
-     *             the context's destination is null
-     */
-    protected void createConsumer(ConsumerConnectionContext context) throws JMSException {
-        if (context == null) {
-            throw new NullPointerException("The context is null");
-        }
-        Session session = context.getSession();
-        if (session == null) {
-            throw new NullPointerException("The context had a null session");
-        }
-        Destination dest = context.getDestination();
-        if (dest == null) {
-            throw new NullPointerException("The context had a null destination");
-        }
-        MessageConsumer consumer = session.createConsumer(dest);
-        context.setMessageConsumer(consumer);
+    protected ConsumerConnectionContext createConsumerConnectionContext(Subsystem subsystem) throws JMSException {
+        return createConsumerConnectionContext(getEndpointFromSubsystem(subsystem));
     }
 }

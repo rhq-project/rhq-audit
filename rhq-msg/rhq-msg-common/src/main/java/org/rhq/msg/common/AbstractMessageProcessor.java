@@ -4,16 +4,22 @@ import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.rhq.msg.common.consumer.ConsumerConnectionContext;
+import org.rhq.msg.common.producer.ProducerConnectionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Superclass that provides some functionality to connect and process messages. This class gives you methods to create
- * destinations, sessions, and connections. This class can cache a connection that can then be used to share across
- * multiple {@link ConnectionContext} objects. See {@link #createOrReuseConnection(ConnectionContext, boolean)}.
+ * Superclass that provides some functionality to connect and process messages, both as a producer or consumer. This
+ * class gives you methods to create destinations, sessions, and connections. This class can cache a connection that can
+ * then be used to share across multiple {@link ConnectionContext} objects. See
+ * {@link #createOrReuseConnection(ConnectionContext, boolean)}.
  */
 public abstract class AbstractMessageProcessor {
 
@@ -199,6 +205,116 @@ public abstract class AbstractMessageProcessor {
             dest = session.createTopic(endpoint.getName());
         }
         context.setDestination(dest);
+    }
+
+    /**
+     * Creates a message producer using the context's session and destination.
+     * 
+     * @param context
+     *            the context where the new producer is stored
+     * @throws JMSException
+     * @throws NullPointerException
+     *             if the context is null or the context's session is null or the context's destination is null
+     */
+    protected void createProducer(ProducerConnectionContext context) throws JMSException {
+        if (context == null) {
+            throw new NullPointerException("The context is null");
+        }
+        Session session = context.getSession();
+        if (session == null) {
+            throw new NullPointerException("The context had a null session");
+        }
+        Destination dest = context.getDestination();
+        if (dest == null) {
+            throw new NullPointerException("The context had a null destination");
+        }
+        MessageProducer producer = session.createProducer(dest);
+        context.setMessageProducer(producer);
+    }
+
+    /**
+     * Creates a text message that can be send via a producer that contains the given BasicMessage's JSON encoded data.
+     * 
+     * @param context
+     *            the context whose session is used to create the message
+     * @param basicMessage
+     *            contains the data that will be JSON-encoded and encapsulated in the created message
+     * @return the message that can be produced
+     * @throws JMSException
+     * @throws NullPointerException
+     *             if the context is null or the context's session is null
+     */
+    protected <T extends BasicMessage> Message createMessage(ConnectionContext context, T basicMessage) throws JMSException {
+        if (context == null) {
+            throw new NullPointerException("The context is null");
+        }
+        Session session = context.getSession();
+        if (session == null) {
+            throw new NullPointerException("The context had a null session");
+        }
+        Message msg = session.createTextMessage(basicMessage.toJSON());
+        return msg;
+    }
+
+    /**
+     * Creates a message consumer using the context's session and destination.
+     * 
+     * @param context
+     *            the context where the new consumer is stored
+     * @throws JMSException
+     * @throws NullPointerException
+     *             if the context is null or the context's session is null or the context's destination is null
+     */
+    protected void createConsumer(ConsumerConnectionContext context) throws JMSException {
+        if (context == null) {
+            throw new NullPointerException("The context is null");
+        }
+        Session session = context.getSession();
+        if (session == null) {
+            throw new NullPointerException("The context had a null session");
+        }
+        Destination dest = context.getDestination();
+        if (dest == null) {
+            throw new NullPointerException("The context had a null destination");
+        }
+        MessageConsumer consumer = session.createConsumer(dest);
+        context.setMessageConsumer(consumer);
+    }
+
+    /**
+     * Creates a new producer connection context, reusing any existing connection that might have already been created.
+     * The destination of the connection's session will be that of the given endpoint.
+     * 
+     * @param endpoint
+     *            where the producer will send messages
+     * @return the new producer connection context fully populated
+     * @throws JMSException
+     */
+    protected ProducerConnectionContext createProducerConnectionContext(Endpoint endpoint) throws JMSException {
+        ProducerConnectionContext context = new ProducerConnectionContext();
+        createOrReuseConnection(context, true);
+        createSession(context);
+        createDestination(context, endpoint);
+        createProducer(context);
+        return context;
+    }
+
+    /**
+     * Creates a new consumer connection context, reusing any existing connection that might have already been created.
+     * The destination of the connection's session will be that of the given endpoint.
+     * 
+     * @param endpoint
+     *            where the consumer will listen for messages
+     * @return the new consumer connection context fully populated
+     * @throws JMSException
+     */
+    protected ConsumerConnectionContext createConsumerConnectionContext(Endpoint endpoint) throws JMSException {
+        ConsumerConnectionContext context = new ConsumerConnectionContext();
+        createOrReuseConnection(context, true);
+        createSession(context);
+        createDestination(context, endpoint);
+        createConsumer(context);
+        return context;
     }
 
 }
