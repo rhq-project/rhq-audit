@@ -13,8 +13,8 @@ import org.rhq.msg.common.consumer.ConsumerConnectionContext;
  * Consumes audit records.
  * 
  * The usage pattern is to create this object with a URL to the broker, then
- * {@link #listen(Subsystem, AuditRecordListener) listen} for audit records.
- * When you are done listening, call {@link #close()}.
+ * {@link #listen(Subsystem, BasicMessageListener)} for audit records. When you are done listening, call
+ * {@link #close()}.
  */
 public class AuditRecordConsumer extends AuditRecordProcessor {
     public AuditRecordConsumer(String brokerURL) throws JMSException {

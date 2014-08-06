@@ -244,7 +244,7 @@ public abstract class AbstractMessageProcessor {
      * @throws NullPointerException
      *             if the context is null or the context's session is null
      */
-    protected <T extends BasicMessage> Message createMessage(ConnectionContext context, T basicMessage) throws JMSException {
+    protected Message createMessage(ConnectionContext context, BasicMessage basicMessage) throws JMSException {
         if (context == null) {
             throw new NullPointerException("The context is null");
         }
