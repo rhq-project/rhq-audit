@@ -9,6 +9,7 @@ import org.rhq.audit.common.Subsystem;
 import org.rhq.audit.producer.AuditRecordProducer;
 import org.rhq.msg.common.MessageId;
 import org.rhq.msg.common.test.AbstractEmbeddedBrokerWrapper;
+import org.rhq.msg.common.test.StoreAndLatchBasicMessageListener;
 import org.rhq.msg.common.test.VMEmbeddedBrokerWrapper;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -51,13 +52,14 @@ public class AuditRecordConsumerTest {
         final int numberOfTestRecords = 5;
         final CountDownLatch latch = new CountDownLatch(numberOfTestRecords);
         final ArrayList<AuditRecord> records = new ArrayList<AuditRecord>();
-        final StoreAndLatchAuditRecordListener listener = new StoreAndLatchAuditRecordListener(latch, records, null);
+        final StoreAndLatchBasicMessageListener<AuditRecord> listener = new StoreAndLatchBasicMessageListener<AuditRecord>(latch, records, null,
+                AuditRecord.class);
 
         consumer.listen(Subsystem.MISCELLANEOUS, listener);
 
         // send some audit records
         for (int i = 0; i < numberOfTestRecords; i++) {
-            AuditRecord auditRecord = new AuditRecord("test message#" + i, Subsystem.MISCELLANEOUS);
+            AuditRecord auditRecord = new AuditRecord("test audit message#" + i, Subsystem.MISCELLANEOUS);
             producer.sendAuditRecord(auditRecord);
         }
         latch.await(5, TimeUnit.SECONDS);
@@ -66,7 +68,7 @@ public class AuditRecordConsumerTest {
         Assert.assertEquals(numberOfTestRecords, records.size());
         for (int i = 0; i < numberOfTestRecords; i++) {
             Assert.assertEquals(Subsystem.MISCELLANEOUS, records.get(i).getSubsystem());
-            Assert.assertEquals("test message#" + i, records.get(i).getMessage());
+            Assert.assertEquals("test audit message#" + i, records.get(i).getMessage());
             Assert.assertNull(records.get(i).getDetails());
             Assert.assertTrue(records.get(i).getTimestamp() > 0L);
             Assert.assertNotNull(records.get(i).getMessageId());
@@ -78,14 +80,15 @@ public class AuditRecordConsumerTest {
         final int numberOfTestRecords = 5;
         final CountDownLatch latch = new CountDownLatch(numberOfTestRecords);
         final ArrayList<AuditRecord> records = new ArrayList<AuditRecord>();
-        final StoreAndLatchAuditRecordListener listener = new StoreAndLatchAuditRecordListener(latch, records, null);
+        final StoreAndLatchBasicMessageListener<AuditRecord> listener = new StoreAndLatchBasicMessageListener<AuditRecord>(latch, records, null,
+                AuditRecord.class);
 
         consumer.listen(Subsystem.MISCELLANEOUS, listener);
 
         // send some audit records, correlate the everything to the first one
         MessageId firstMessageId = null;
         for (int i = 0; i < numberOfTestRecords; i++) {
-            AuditRecord auditRecord = new AuditRecord("test message#" + i, Subsystem.MISCELLANEOUS);
+            AuditRecord auditRecord = new AuditRecord("test audit message#" + i, Subsystem.MISCELLANEOUS);
             if (firstMessageId != null) {
                 auditRecord.setCorrelationId(firstMessageId);
                 producer.sendAuditRecord(auditRecord);
@@ -100,7 +103,7 @@ public class AuditRecordConsumerTest {
         Assert.assertEquals(numberOfTestRecords, records.size());
         for (int i = 0; i < numberOfTestRecords; i++) {
             Assert.assertEquals(Subsystem.MISCELLANEOUS, records.get(i).getSubsystem());
-            Assert.assertEquals("test message#" + i, records.get(i).getMessage());
+            Assert.assertEquals("test audit message#" + i, records.get(i).getMessage());
             Assert.assertNull(records.get(i).getDetails());
             Assert.assertTrue(records.get(i).getTimestamp() > 0L);
             Assert.assertNotNull(records.get(i).getMessageId());

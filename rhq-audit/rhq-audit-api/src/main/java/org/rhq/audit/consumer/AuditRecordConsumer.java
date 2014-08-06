@@ -5,8 +5,10 @@ import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
 
+import org.rhq.audit.common.AuditRecord;
 import org.rhq.audit.common.AuditRecordProcessor;
 import org.rhq.audit.common.Subsystem;
+import org.rhq.msg.common.consumer.BasicMessageListener;
 import org.rhq.msg.common.consumer.ConsumerConnectionContext;
 
 /**
@@ -31,7 +33,7 @@ public class AuditRecordConsumer extends AuditRecordProcessor {
      *            the listener that processes the incoming audit records
      * @throws JMSException
      */
-    public void listen(Subsystem subsystem, AuditRecordListener listener) throws JMSException {
+    public void listen(Subsystem subsystem, BasicMessageListener<AuditRecord> listener) throws JMSException {
         ConsumerConnectionContext context = createConnectionContext(subsystem);
         MessageConsumer consumer = context.getMessageConsumer();
         consumer.setMessageListener(listener);

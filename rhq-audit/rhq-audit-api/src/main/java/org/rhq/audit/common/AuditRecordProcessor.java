@@ -7,7 +7,8 @@ import org.rhq.msg.common.Endpoint;
 import org.rhq.msg.common.Endpoint.Type;
 
 /**
- * Superclass that provides some functionality to process audit records.
+ * Superclass that provides some functionality to process audit records. This can be the superclass to either a consumer
+ * or producer.
  */
 public abstract class AuditRecordProcessor extends AbstractMessageProcessor {
 

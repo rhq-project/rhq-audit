@@ -38,7 +38,7 @@ public class AuditRecordProducerTest {
 
     public void testMessageSend() throws Exception {
         AuditRecord auditRecord;
-        auditRecord = new AuditRecord("test message", Subsystem.MISCELLANEOUS);
+        auditRecord = new AuditRecord("test audit record", Subsystem.MISCELLANEOUS);
         Assert.assertNull(auditRecord.getMessageId());
         MessageId messageId = producer.sendAuditRecord(auditRecord);
         Assert.assertNotNull(messageId);

@@ -47,11 +47,12 @@ public class EmbeddedBrokerTest {
             BasicMessage basicMessage = new BasicMessage("Hello World!", details);
 
             CountDownLatch latch = new CountDownLatch(1);
-            ArrayList<String> receivedMessages = new ArrayList<String>();
+            ArrayList<BasicMessage> receivedMessages = new ArrayList<BasicMessage>();
             ArrayList<String> errors = new ArrayList<String>();
 
             // start the consumer
-            StoreAndLatchMessageListener messageListener = new StoreAndLatchMessageListener(latch, receivedMessages, errors);
+            StoreAndLatchBasicMessageListener<BasicMessage> messageListener = new StoreAndLatchBasicMessageListener<BasicMessage>(latch, receivedMessages,
+                    errors);
             ConsumerConnection consumerConnection = new ConsumerConnection(brokerURL, endpoint, messageListener);
 
             // start the producer
@@ -71,9 +72,106 @@ public class EmbeddedBrokerTest {
             // make sure the message flowed properly
             Assert.assertTrue(errors.isEmpty(), "Failed to send message propertly: " + errors);
             Assert.assertEquals(receivedMessages.size(), 1, "Didn't receive message: " + receivedMessages);
-            BasicMessage receivedBasicMessage = BasicMessage.fromJSON(receivedMessages.get(0), BasicMessage.class);
+            BasicMessage receivedBasicMessage = receivedMessages.get(0);
             Assert.assertEquals(receivedBasicMessage.getMessage(), basicMessage.getMessage());
             Assert.assertEquals(receivedBasicMessage.getDetails(), basicMessage.getDetails());
+        } finally {
+            broker.stop();
+        }
+    }
+
+    public void testSubClassingBasicMessage() throws Exception {
+        VMEmbeddedBrokerWrapper broker = new VMEmbeddedBrokerWrapper();
+        broker.start();
+
+        try {
+            String brokerURL = broker.getBrokerURL();
+            Endpoint endpoint = new Endpoint(Type.QUEUE, "testq");
+
+            // test that sending messages of a BasicMessage subclass type can flow
+            Map<String, String> details = new HashMap<String, String>();
+            details.put("key1", "val1");
+            details.put("secondkey", "secondval");
+            SpecificMessage specificMessage = new SpecificMessage("hello", details, "specific text");
+
+            CountDownLatch latch = new CountDownLatch(1);
+            ArrayList<SpecificMessage> receivedMessages = new ArrayList<SpecificMessage>();
+            ArrayList<String> errors = new ArrayList<String>();
+
+            // start the consumer listening for our subclass SpecificMessage objects
+            StoreAndLatchBasicMessageListener<SpecificMessage> messageListener = new StoreAndLatchBasicMessageListener<SpecificMessage>(latch,
+                    receivedMessages, errors, SpecificMessage.class);
+            ConsumerConnection consumerConnection = new ConsumerConnection(brokerURL, endpoint, messageListener);
+
+            // start the producer
+            ProducerConnection producerConnection = new ProducerConnection(brokerURL, endpoint);
+            producerConnection.sendMessage(specificMessage.toJSON());
+
+            // wait for the message to flow
+            boolean gotMessage = latch.await(5, TimeUnit.SECONDS);
+            if (!gotMessage) {
+                errors.add("Timed out waiting for message - it never showed up");
+            }
+
+            // close everything
+            producerConnection.close();
+            consumerConnection.close();
+
+            // make sure the message flowed properly
+            Assert.assertTrue(errors.isEmpty(), "Failed to send message propertly: " + errors);
+            Assert.assertEquals(receivedMessages.size(), 1, "Didn't receive message: " + receivedMessages);
+            SpecificMessage receivedSpecificMessage = receivedMessages.get(0);
+            Assert.assertEquals(receivedSpecificMessage.getMessage(), specificMessage.getMessage());
+            Assert.assertEquals(receivedSpecificMessage.getDetails(), specificMessage.getDetails());
+            Assert.assertEquals(receivedSpecificMessage.getSpecific(), specificMessage.getSpecific());
+        } finally {
+            broker.stop();
+        }
+    }
+
+    public void testSubClassingBasicMessageAndListener() throws Exception {
+        VMEmbeddedBrokerWrapper broker = new VMEmbeddedBrokerWrapper();
+        broker.start();
+
+        try {
+            String brokerURL = broker.getBrokerURL();
+            Endpoint endpoint = new Endpoint(Type.QUEUE, "testq");
+
+            // test that sending messages of a BasicMessage subclass type can flow
+            Map<String, String> details = new HashMap<String, String>();
+            details.put("key1", "val1");
+            details.put("secondkey", "secondval");
+            SpecificMessage specificMessage = new SpecificMessage("hello", details, "specific text");
+
+            CountDownLatch latch = new CountDownLatch(1);
+            ArrayList<SpecificMessage> receivedMessages = new ArrayList<SpecificMessage>();
+            ArrayList<String> errors = new ArrayList<String>();
+
+            // start the consumer listening for our subclass SpecificMessage objects
+            SpecificMessageStoreAndLatchListener messageListener = new SpecificMessageStoreAndLatchListener(latch, receivedMessages, errors);
+            ConsumerConnection consumerConnection = new ConsumerConnection(brokerURL, endpoint, messageListener);
+
+            // start the producer
+            ProducerConnection producerConnection = new ProducerConnection(brokerURL, endpoint);
+            producerConnection.sendMessage(specificMessage.toJSON());
+
+            // wait for the message to flow
+            boolean gotMessage = latch.await(5, TimeUnit.SECONDS);
+            if (!gotMessage) {
+                errors.add("Timed out waiting for message - it never showed up");
+            }
+
+            // close everything
+            producerConnection.close();
+            consumerConnection.close();
+
+            // make sure the message flowed properly
+            Assert.assertTrue(errors.isEmpty(), "Failed to send message propertly: " + errors);
+            Assert.assertEquals(receivedMessages.size(), 1, "Didn't receive message: " + receivedMessages);
+            SpecificMessage receivedSpecificMessage = receivedMessages.get(0);
+            Assert.assertEquals(receivedSpecificMessage.getMessage(), specificMessage.getMessage());
+            Assert.assertEquals(receivedSpecificMessage.getDetails(), specificMessage.getDetails());
+            Assert.assertEquals(receivedSpecificMessage.getSpecific(), specificMessage.getSpecific());
         } finally {
             broker.stop();
         }
