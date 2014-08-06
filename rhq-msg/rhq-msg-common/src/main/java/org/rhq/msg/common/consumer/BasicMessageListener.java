@@ -15,9 +15,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A message listener that expects to receive a JSON-encoded BasicMessage or one of its subclasses.
- * Implementors need only implement the method that takes an BasicRecord or one of its subclasses; the
- * JSON decoding is handled for you.
+ * A message listener that expects to receive a JSON-encoded BasicMessage or one of its subclasses. Implementors need
+ * only implement the method that takes an BasicRecord or one of its subclasses; the JSON decoding is handled for you.
+ * 
+ * Subclasses will typically override {@link #BasicMessageListener(Class)} or {@link #determineBasicMessageClass()}
+ * unless either (a) the subclass hierarchy has generic types that are specific enough for reflection to determine the
+ * type of {@link BasicMessage} being listened for or (b) the message type being listened for is {@link BasicMessage}
+ * and not one of its subclasses.
  */
 
 public abstract class BasicMessageListener<T extends BasicMessage> implements MessageListener {
@@ -35,7 +39,9 @@ public abstract class BasicMessageListener<T extends BasicMessage> implements Me
 
     /**
      * If a subclass knows the type and can give it to us, that will be the type used to decode JSON strings into that
-     * message type.
+     * message type. If this constructor is not used by subclasses, typically those subclasses will need to override
+     * {@link #determineBasicMessageClass()} unless {@link BasicMessage} is the message type that subclass wants to
+     * explicitly use (as opposed to a subclass of BasicMessage).
      * 
      * @param jsonDecoderRing
      *            the class representation of the generic type T

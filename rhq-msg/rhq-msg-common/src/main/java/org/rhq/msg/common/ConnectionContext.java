@@ -5,9 +5,8 @@ import javax.jms.Destination;
 import javax.jms.Session;
 
 /**
- * Contains objects related to particular connection. This object is does not
- * distinguish between a producer's connection or consumer's connection - that
- * is the job of the subclasses.
+ * This is a simple POJO that just contains objects related to particular connection. This object does not distinguish
+ * between a producer's connection or consumer's connection - that is the job of the subclasses.
  */
 public class ConnectionContext {
     private Connection connection;

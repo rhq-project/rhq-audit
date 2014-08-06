@@ -14,9 +14,9 @@ import com.google.gson.annotations.Expose;
  * The {@link #getMessageId() message ID} is assigned by the messaging framework and so typically is not explicitly set.
  * 
  * The {@link #getCorrelationId() correlation ID} is a message ID of another message that was sent previously. This is
- * usually left unset unless this message needs to be correlated with another (as an example, you can correlate a
- * "Stopped" event with a "Stopping" event record when a process stopped and correlate that to when that process began
- * to stop).
+ * usually left unset unless this message needs to be correlated with another. As an example, when a process is stopped,
+ * you can correlate the "Stopped" event with the "Stopping" event so you can later determine how long it took for the
+ * process to stop.
  */
 public class BasicMessage {
     // these are passed out-of-band of the message body - these attributes will therefore not be JSON encoded

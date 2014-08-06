@@ -1,8 +1,7 @@
 package org.rhq.msg.common;
 
 /**
- * POJO that indicates the type of endpoint (queue or topic) and that queue or
- * topic's name.
+ * POJO that indicates the type of endpoint (queue or topic) and that queue or topic's name.
  */
 public class Endpoint {
     public enum Type {
