@@ -55,7 +55,7 @@ public class AuditRecordConsumerTest {
         final StoreAndLatchBasicMessageListener<AuditRecord> listener = new StoreAndLatchBasicMessageListener<AuditRecord>(latch, records, null,
                 AuditRecord.class);
 
-        consumer.listen(Subsystem.MISCELLANEOUS, listener);
+        consumer.listen(listener);
 
         // send some audit records
         for (int i = 0; i < numberOfTestRecords; i++) {
@@ -83,7 +83,7 @@ public class AuditRecordConsumerTest {
         final StoreAndLatchBasicMessageListener<AuditRecord> listener = new StoreAndLatchBasicMessageListener<AuditRecord>(latch, records, null,
                 AuditRecord.class);
 
-        consumer.listen(Subsystem.MISCELLANEOUS, listener);
+        consumer.listen(listener);
 
         // send some audit records, correlate the everything to the first one
         MessageId firstMessageId = null;

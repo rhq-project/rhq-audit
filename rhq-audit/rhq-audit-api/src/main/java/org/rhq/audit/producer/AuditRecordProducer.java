@@ -5,7 +5,6 @@ import javax.jms.Message;
 
 import org.rhq.audit.common.AuditRecord;
 import org.rhq.audit.common.AuditRecordProcessor;
-import org.rhq.audit.common.Subsystem;
 import org.rhq.msg.common.MessageId;
 import org.rhq.msg.common.producer.ProducerConnectionContext;
 import org.slf4j.Logger;
@@ -41,7 +40,7 @@ public class AuditRecordProducer extends AuditRecordProcessor {
      */
     public MessageId sendAuditRecord(AuditRecord auditRecord) throws JMSException {
         // create the JMS message to be sent
-        ProducerConnectionContext context = createProducerConnectionContext(auditRecord.getSubsystem());
+        ProducerConnectionContext context = createProducerConnectionContext();
         Message msg = createMessage(context, auditRecord);
 
         // if the auditRecord is correlated with another, put the correlation ID in the Message to be sent
@@ -64,15 +63,7 @@ public class AuditRecordProducer extends AuditRecordProcessor {
         return messageId;
     }
 
-    /**
-     * Creates a new connection context, reusing any existing connection that might have already been created. The
-     * endpoint of the session is dictated by the given subsystem (each subsystem has its own endpoint).
-     * 
-     * @param subsystem
-     * @return the context fully populated
-     * @throws JMSException
-     */
-    protected ProducerConnectionContext createProducerConnectionContext(Subsystem subsystem) throws JMSException {
-        return createProducerConnectionContext(getEndpointFromSubsystem(subsystem));
+    protected ProducerConnectionContext createProducerConnectionContext() throws JMSException {
+        return createProducerConnectionContext(getEndpoint());
     }
 }
