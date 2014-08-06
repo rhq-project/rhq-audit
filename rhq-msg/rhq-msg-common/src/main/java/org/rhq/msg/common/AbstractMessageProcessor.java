@@ -11,7 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Superclass that provides some functionality to connect and process messages.
+ * Superclass that provides some functionality to connect and process messages. This class gives you methods to create
+ * destinations, sessions, and connections. This class can cache a connection that can then be used to share across
+ * multiple {@link ConnectionContext} objects. See {@link #createOrReuseConnection(ConnectionContext, boolean)}.
  */
 public abstract class AbstractMessageProcessor {
 
