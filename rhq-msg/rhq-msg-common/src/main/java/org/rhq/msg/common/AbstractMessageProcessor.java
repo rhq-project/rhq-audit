@@ -52,7 +52,18 @@ public abstract class AbstractMessageProcessor {
      * @see {@link #createConsumerConnectionContext(Endpoint)}
      */
     public <T extends BasicMessage> void listen(ConsumerConnectionContext context, BasicMessageListener<T> listener) throws JMSException {
+        if (context == null) {
+            throw new NullPointerException("context must not be null");
+        }
+        if (listener == null) {
+            throw new NullPointerException("listener must not be null");
+        }
+
         MessageConsumer consumer = context.getMessageConsumer();
+        if (consumer == null) {
+            throw new NullPointerException("context had a null consumer");
+        }
+
         consumer.setMessageListener(listener);
     }
 
@@ -70,6 +81,13 @@ public abstract class AbstractMessageProcessor {
      * @see {@link #createProducerConnectionContext(Endpoint)}
      */
     public MessageId send(ProducerConnectionContext context, BasicMessage basicMessage) throws JMSException {
+        if (context == null) {
+            throw new NullPointerException("context must not be null");
+        }
+        if (basicMessage == null) {
+            throw new NullPointerException("message must not be null");
+        }
+
         // create the JMS message to be sent
         Message msg = createMessage(context, basicMessage);
 
@@ -84,7 +102,12 @@ public abstract class AbstractMessageProcessor {
         }
 
         // now send the message to the broker
-        context.getMessageProducer().send(msg);
+        MessageProducer producer = context.getMessageProducer();
+        if (producer == null) {
+            throw new NullPointerException("context had a null producer");
+        }
+
+        producer.send(msg);
 
         // put message ID into the message in case the caller wants to correlate it with another record
         MessageId messageId = new MessageId(msg.getJMSMessageID());
