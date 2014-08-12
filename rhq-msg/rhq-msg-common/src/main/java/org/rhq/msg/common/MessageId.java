@@ -13,7 +13,7 @@ public class MessageId {
         this.id = id;
     }
 
-    public String getName() {
+    public String getId() {
         return id;
     }
 
