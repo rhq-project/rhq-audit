@@ -5,48 +5,14 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.rhq.audit.common.AuditRecord;
-import org.rhq.audit.common.AuditRecordProcessor;
 import org.rhq.audit.common.Subsystem;
 import org.rhq.msg.common.MessageId;
-import org.rhq.msg.common.test.AbstractEmbeddedBrokerWrapper;
 import org.rhq.msg.common.test.StoreAndLatchBasicMessageListener;
-import org.rhq.msg.common.test.VMEmbeddedBrokerWrapper;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 @Test
-public class AuditRecordConsumerTest {
-
-    private AbstractEmbeddedBrokerWrapper broker;
-    private AuditRecordProcessor producer;
-    private AuditRecordProcessor consumer;
-
-    @BeforeMethod
-    public void setupProducerAndConsumer() throws Exception {
-        broker = new VMEmbeddedBrokerWrapper();
-        broker.start();
-        String brokerURL = broker.getBrokerURL();
-        producer = new AuditRecordProcessor(brokerURL);
-        consumer = new AuditRecordProcessor(brokerURL);
-    }
-
-    @AfterMethod
-    public void teardownProducerAndConsumer() throws Exception {
-        if (producer != null) {
-            producer.close();
-            producer = null;
-        }
-        if (consumer != null) {
-            consumer.close();
-            consumer = null;
-        }
-        if (broker != null) {
-            broker.stop();
-            broker = null;
-        }
-    }
+public class AuditRecordConsumerTest extends ProducerConsumerSetup {
 
     public void testMessageSend() throws Exception {
         final int numberOfTestRecords = 5;
