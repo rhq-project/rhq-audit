@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 
 public abstract class BasicMessageListener<T extends BasicMessage> implements MessageListener {
-    protected final Logger log = LoggerFactory.getLogger(BasicMessageListener.class);
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     // In order to convert a JSON string to a BasicMessage object (or one of its subclasses), we need the actual Java
     // class of the generic type T. Java does not make it easy to find the class representation of T. This field will
@@ -64,12 +64,12 @@ public abstract class BasicMessageListener<T extends BasicMessage> implements Me
                 basicMessage.setCorrelationId(new MessageId(message.getJMSCorrelationID()));
             }
 
-            log.trace("Received basic message: {}", basicMessage);
+            getLog().trace("Received basic message: {}", basicMessage);
         } catch (JMSException e) {
-            log.error("A message was received that was not a valid text message", e);
+            getLog().error("A message was received that was not a valid text message", e);
             return;
         } catch (Exception e) {
-            log.error("A message was received that was not a valid JSON-encoded BasicMessage object", e);
+            getLog().error("A message was received that was not a valid JSON-encoded BasicMessage object", e);
             return;
         }
 
@@ -104,6 +104,13 @@ public abstract class BasicMessageListener<T extends BasicMessage> implements Me
             clazz = (Class<T>) typeVar.getBounds()[0];
         }
         return clazz;
+    }
+
+    /**
+     * @return logger for subclasses to use
+     */
+    protected Logger getLog() {
+        return this.log;
     }
 
     /**
