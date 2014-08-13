@@ -13,6 +13,7 @@
 
     <properties>
         <rhq-msg-version>0.1</rhq-msg-version>
+        <mockito-core-version>1.9.0</mockito-core-version>
     </properties>
 
     <modules>
@@ -40,6 +41,12 @@
                 <groupId>org.rhq.msg</groupId>
                 <artifactId>rhq-msg-test-common</artifactId>
                 <version>${rhq-msg-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito-core-version}</version>
             </dependency>
 
         </dependencies>
