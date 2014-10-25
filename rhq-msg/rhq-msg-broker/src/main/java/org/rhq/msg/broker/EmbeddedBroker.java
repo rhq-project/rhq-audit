@@ -51,6 +51,14 @@ public class EmbeddedBroker {
         initializeBrokerService();
     }
 
+    public boolean isBrokerStarted() {
+        BrokerService broker = getBrokerService();
+        if (broker == null) {
+            return false;
+        }
+        return broker.isStarted();
+    }
+
     public void startBroker() throws Exception {
         BrokerService broker = getBrokerService();
         if (broker == null) {

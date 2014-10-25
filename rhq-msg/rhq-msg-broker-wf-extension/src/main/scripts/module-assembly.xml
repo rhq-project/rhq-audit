@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<assembly>
+    <id>module-assembly</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <baseDirectory>${project.build.finalName}-module</baseDirectory>
+    <fileSets>
+        <!-- the module.xml which only goes in the zip, it is not in the jar -->
+        <fileSet>
+            <directory>${basedir}/src/main/resources/module</directory>
+            <outputDirectory>/org/rhq/msg/broker/${artifactId}</outputDirectory>
+            <includes>
+                <include>main/module.xml</include>
+            </includes>
+            <filtered>true</filtered>
+            <fileMode>0644</fileMode>
+            <directoryMode>0755</directoryMode>
+        </fileSet>
+        <!-- the extension subsystem jar - this is the extension classes -->
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory>/org/rhq/msg/broker/${artifactId}/main</outputDirectory>
+            <includes>
+                <include>${project.build.finalName}.jar</include>
+            </includes>
+            <fileMode>0644</fileMode>
+            <directoryMode>0755</directoryMode>
+        </fileSet>
+    </fileSets>
+</assembly>
+

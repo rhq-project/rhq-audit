@@ -36,6 +36,7 @@ public class EmbeddedBrokerTest {
 
     private void internalTestBroker(AbstractEmbeddedBrokerWrapper broker, Endpoint endpoint) throws Exception {
         broker.start();
+        assert broker.getBroker().isBrokerStarted() : "Broker should have been started by now";
 
         try {
             String brokerURL = broker.getBrokerURL();
@@ -82,7 +83,9 @@ public class EmbeddedBrokerTest {
 
     public void testSubClassingBasicMessage() throws Exception {
         VMEmbeddedBrokerWrapper broker = new VMEmbeddedBrokerWrapper();
+        assert !broker.getBroker().isBrokerStarted() : "Broker should not have been started yet";
         broker.start();
+        assert broker.getBroker().isBrokerStarted() : "Broker should have been started by now";
 
         try {
             String brokerURL = broker.getBrokerURL();
