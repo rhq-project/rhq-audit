@@ -112,8 +112,8 @@ public class BrokerSubsystemExtension implements Extension {
 
         @Override
         public void readElement(XMLExtendedStreamReader reader, List<ModelNode> list) throws XMLStreamException {
-            // The "enabled" and "configuration-file" attributes are required
-            ParseUtils.requireAttributes(reader, BROKER_ENABLED_ATTR, BROKER_CONFIG_FILE_ATTR);
+            // The "enabled" attribute is required, "configuration-file" is optional
+            ParseUtils.requireAttributes(reader, BROKER_ENABLED_ATTR);
 
             // Add the main subsystem 'add' operation
             final ModelNode opAdd = new ModelNode();

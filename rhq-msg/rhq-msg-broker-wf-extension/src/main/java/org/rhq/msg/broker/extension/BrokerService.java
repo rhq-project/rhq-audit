@@ -80,7 +80,6 @@ public class BrokerService implements Service<BrokerService> {
 
     protected void setConfigurationFile(String configFile) {
         this.configurationFile = configFile;
-        log.info("Broker told to use configuration file [" + configFile + "]");
     }
 
     protected void setCustomConfigurationProperties(Map<String, String> properties) {
@@ -120,6 +119,7 @@ public class BrokerService implements Service<BrokerService> {
 
             ServerEnvironment env = envServiceValue.getValue();
             BrokerConfigurationSetup configSetup = new BrokerConfigurationSetup(configurationFile, customConfigProperties, env);
+            log.info("Broker told to use configuration file [" + configSetup.getConfigurationFile() + "]");
 
             // build the startup command line arguments to pass to the broker
             Map<String, String> customConfig = configSetup.getCustomConfiguration();
