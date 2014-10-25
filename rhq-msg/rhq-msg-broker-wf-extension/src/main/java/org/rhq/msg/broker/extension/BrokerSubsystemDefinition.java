@@ -27,7 +27,8 @@ public class BrokerSubsystemDefinition extends SimpleResourceDefinition {
 
     protected static final SimpleAttributeDefinition BROKER_CONFIG_FILE_ATTRIBDEF = new SimpleAttributeDefinitionBuilder(
             BrokerSubsystemExtension.BROKER_CONFIG_FILE_ATTR, ModelType.STRING).setAllowExpression(true)
-            .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES).setAllowNull(false).build();
+            .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES).setDefaultValue(new ModelNode(BrokerSubsystemExtension.BROKER_CONFIG_FILE_DEFAULT))
+            .setAllowNull(true).build();
 
     protected static final SimpleAttributeDefinition BROKER_NAME_ATTRIBDEF = new SimpleAttributeDefinitionBuilder(BrokerSubsystemExtension.BROKER_NAME_ELEMENT,
             ModelType.STRING).setAllowExpression(true).setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES).setAllowNull(true).build();

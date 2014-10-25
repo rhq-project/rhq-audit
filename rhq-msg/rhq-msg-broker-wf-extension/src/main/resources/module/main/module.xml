@@ -23,6 +23,7 @@
 
         <!-- other dependencies we need -->
         <module name="gnu.getopt"/>
+        <module name="org.jboss.common-core"/>
         <module name="org.jboss.as.network"/>
         <module name="org.jboss.as.jmx"/>
     </dependencies>
