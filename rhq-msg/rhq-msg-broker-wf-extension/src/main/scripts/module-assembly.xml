@@ -8,7 +8,7 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <baseDirectory>${project.build.finalName}-module</baseDirectory>
     <fileSets>
-        <!-- the module.xml which only goes in the zip, it is not in the jar -->
+        <!-- the files which only go in the zip, not in the jar -->
         <fileSet>
             <directory>${basedir}/src/main/resources/module</directory>
             <outputDirectory>/org/rhq/msg/broker</outputDirectory>
@@ -27,6 +27,12 @@
             <includes>
                 <include>${project.build.finalName}.jar</include>
             </includes>
+            <fileMode>0644</fileMode>
+            <directoryMode>0755</directoryMode>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/module-deps</directory>
+            <outputDirectory>/org/rhq/msg/broker/main</outputDirectory>
             <fileMode>0644</fileMode>
             <directoryMode>0755</directoryMode>
         </fileSet>

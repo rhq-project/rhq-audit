@@ -4,6 +4,10 @@
 
     <resources>
         <resource-root path="${project.build.finalName}.jar"/>
+        <resource-root path="rhq-msg-broker-${project.version}.jar"/>
+        <resource-root path="activemq-all-${activemq-version}.jar"/>
+        <resource-root path="activemq-spring-${activemq-version}.jar"/>
+        <resource-root path="spring-${spring-version}.jar"/>
     </resources>
 
     <dependencies>
@@ -18,6 +22,7 @@
         <module name="org.jboss.vfs"/>
 
         <!-- other dependencies we need -->
+        <module name="gnu.getopt"/>
         <module name="org.jboss.as.network"/>
         <module name="org.jboss.as.jmx"/>
     </dependencies>
