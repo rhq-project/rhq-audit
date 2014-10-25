@@ -9,6 +9,7 @@
         <resource-root path="activemq-spring-${activemq-version}.jar"/>
         <resource-root path="spring-${spring-version}.jar"/>
         <resource-root path="xbean-spring-${apache-xbean-spring-version}.jar"/>
+        <resource-root path="config"/>
     </resources>
 
     <dependencies>

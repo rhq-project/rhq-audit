@@ -14,7 +14,7 @@
             <outputDirectory>/org/rhq/msg/broker</outputDirectory>
             <includes>
                 <include>main/module.xml</include>
-                <include>main/default-broker.xml</include>
+                <include>main/config/default-broker.xml</include>
             </includes>
             <filtered>true</filtered>
             <fileMode>0644</fileMode>

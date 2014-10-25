@@ -31,7 +31,7 @@
                 <excludes>
                     <!-- these don't need to be in the jar, just in our module .zip -->
                     <exclude>module/main/module.xml</exclude>
-                    <exclude>module/main/default-broker.xml</exclude>
+                    <exclude>module/main/config/default-broker.xml</exclude>
                 </excludes>
             </resource>
         </resources>

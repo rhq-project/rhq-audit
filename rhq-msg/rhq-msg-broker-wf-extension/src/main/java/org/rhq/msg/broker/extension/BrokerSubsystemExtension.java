@@ -34,7 +34,7 @@ public class BrokerSubsystemExtension implements Extension {
     private final Logger log = Logger.getLogger(BrokerSubsystemExtension.class);
 
     public static final String NAMESPACE = "urn:org.rhq.msg:broker:1.0";
-    public static final String SUBSYSTEM_NAME = "broker";
+    public static final String SUBSYSTEM_NAME = "rhq-msg-broker";
 
     private final SubsystemParser parser = new SubsystemParser();
 

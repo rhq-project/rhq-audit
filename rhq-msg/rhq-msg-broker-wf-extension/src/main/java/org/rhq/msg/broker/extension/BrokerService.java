@@ -9,8 +9,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.jboss.as.network.SocketBinding;
 import org.jboss.as.server.ServerEnvironment;
 import org.jboss.logging.Logger;
-import org.jboss.modules.Module;
-import org.jboss.modules.Resource;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.StartContext;
@@ -173,18 +171,5 @@ public class BrokerService implements Service<BrokerService> {
             }
         }
         theBroker.set(null);
-    }
-
-    /**
-     * Gets information about a file that is inside our module.
-     * 
-     * @param name
-     *            name of the file relative to the module
-     * @return object referencing the file from our module
-     */
-    private Resource getExportedResource(String name) {
-        Module module = Module.forClass(getClass());
-        Resource r = module.getExportedResource("", name);
-        return r;
     }
 }

@@ -1,5 +1,6 @@
 package org.rhq.msg.broker.extension;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,8 @@ import org.jboss.as.server.ServerEnvironmentService;
 import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.Property;
 import org.jboss.logging.Logger;
+import org.jboss.modules.Module;
+import org.jboss.modules.Resource;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
@@ -62,6 +65,7 @@ class BrokerSubsystemAdd extends AbstractAddStepHandler {
         if (configFile == null || configFile.trim().isEmpty()) {
             configFile = BrokerSubsystemExtension.BROKER_CONFIG_FILE_DEFAULT;
         }
+        configFile = getConfigFilePath(configFile);
 
         log.info("Broker is enabled and will be deployed using config file [" + configFile + "]");
 
@@ -115,6 +119,30 @@ class BrokerSubsystemAdd extends AbstractAddStepHandler {
         ModelNode node = attribDef.resolveModelAttribute(context, model);
         if (node.isDefined()) {
             customConfigProps.put((customConfigPropName == null) ? attribDef.getName() : customConfigPropName, node.asString());
+        }
+    }
+
+    /**
+     * Because the EmbeddedBroker uses third party libs to read this file, we need to put it in a place where we can know
+     * and pass along its absolute path. This returns that absolute path of the config file.
+     * 
+     * @param configFile
+     *            can be an absolute file path or a relative path which could be on the module classloader.
+     * @return the absolute path of the config file that the broker will use
+     */
+    private String getConfigFilePath(String configFile) {
+        File file = new File(configFile);
+        if (file.isAbsolute()) {
+            return file.getAbsolutePath();
+        }
+
+        try {
+            Module module = Module.forClass(getClass());
+            Resource r = module.getExportedResource("config", configFile);
+            return r.getURL().toString();
+        } catch (Throwable t) {
+            log.info("Cannot determine absolute path of config file [" + configFile + "]- does it exist? - " + t.toString());
+            return configFile;
         }
     }
 }
