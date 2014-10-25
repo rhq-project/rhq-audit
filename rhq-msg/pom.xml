@@ -28,6 +28,7 @@
 
         <activemq-version>5.10.0</activemq-version>
         <spring-version>2.5.5</spring-version>
+        <apache-xbean-spring-version>3.16</apache-xbean-spring-version> <!-- needed in the wf-extension module assembly -->
         <testng-version>6.5.2</testng-version>
         <getopt-version>1.0.13</getopt-version>
         <gson-version>2.2.4</gson-version>
@@ -77,6 +78,12 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring</artifactId>
                 <version>${spring-version}</version>
+            </dependency>
+            <!-- this is used to copy this dep jar to the wf-extension module -->
+            <dependency>
+                <groupId>org.apache.xbean</groupId>
+                <artifactId>xbean-spring</artifactId>
+                <version>${apache-xbean-spring-version}</version>
             </dependency>
 
             <dependency>

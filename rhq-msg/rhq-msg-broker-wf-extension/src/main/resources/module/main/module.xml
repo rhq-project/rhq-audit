@@ -8,6 +8,7 @@
         <resource-root path="activemq-all-${activemq-version}.jar"/>
         <resource-root path="activemq-spring-${activemq-version}.jar"/>
         <resource-root path="spring-${spring-version}.jar"/>
+        <resource-root path="xbean-spring-${apache-xbean-spring-version}.jar"/>
     </resources>
 
     <dependencies>
@@ -23,6 +24,9 @@
 
         <!-- other dependencies we need -->
         <module name="gnu.getopt"/>
+        <module name="org.apache.commons.logging"/>
+        <module name="org.apache.log4j"/>
+        <module name="org.jboss.logmanager" services="import"/>
         <module name="org.jboss.common-core"/>
         <module name="org.jboss.as.network"/>
         <module name="org.jboss.as.jmx"/>
