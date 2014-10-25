@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <assembly>
-    <id>module-assembly</id>
+    <id>module</id>
     <formats>
         <format>zip</format>
     </formats>
@@ -11,9 +11,10 @@
         <!-- the module.xml which only goes in the zip, it is not in the jar -->
         <fileSet>
             <directory>${basedir}/src/main/resources/module</directory>
-            <outputDirectory>/org/rhq/msg/broker/${artifactId}</outputDirectory>
+            <outputDirectory>/org/rhq/msg/broker</outputDirectory>
             <includes>
                 <include>main/module.xml</include>
+                <include>main/default-broker.xml</include>
             </includes>
             <filtered>true</filtered>
             <fileMode>0644</fileMode>
@@ -22,7 +23,7 @@
         <!-- the extension subsystem jar - this is the extension classes -->
         <fileSet>
             <directory>${project.build.directory}</directory>
-            <outputDirectory>/org/rhq/msg/broker/${artifactId}/main</outputDirectory>
+            <outputDirectory>/org/rhq/msg/broker/main</outputDirectory>
             <includes>
                 <include>${project.build.finalName}.jar</include>
             </includes>

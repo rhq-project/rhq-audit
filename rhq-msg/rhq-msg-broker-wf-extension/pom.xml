@@ -29,8 +29,9 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <excludes>
-                    <!-- this doesn't need to be in the jar, just in our module .zip -->
+                    <!-- these don't need to be in the jar, just in our module .zip -->
                     <exclude>module/main/module.xml</exclude>
+                    <exclude>module/main/default-broker.xml</exclude>
                 </excludes>
             </resource>
         </resources>
@@ -45,7 +46,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>module-assembly</id>
+                        <id>module</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
