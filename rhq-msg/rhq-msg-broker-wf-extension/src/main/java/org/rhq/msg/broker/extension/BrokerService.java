@@ -132,7 +132,7 @@ public class BrokerService implements Service<BrokerService> {
                 args[argIndex++] = name + "=" + value;
             }
             args[argIndex++] = "-c";
-            args[argIndex++] = configSetup.getConfigurationFile(); // TODO: what about getExportedResource()?
+            args[argIndex++] = configSetup.getConfigurationFile();
 
             theBroker.set(new EmbeddedBroker(args));
 

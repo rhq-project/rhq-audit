@@ -1,9 +1,12 @@
 package org.rhq.msg.broker.extension;
 
+import java.io.File;
 import java.util.Map;
 
 import org.jboss.as.server.ServerEnvironment;
 import org.jboss.logging.Logger;
+import org.jboss.modules.Module;
+import org.jboss.modules.Resource;
 import org.jboss.util.StringPropertyReplacer;
 
 public class BrokerConfigurationSetup {
@@ -11,7 +14,7 @@ public class BrokerConfigurationSetup {
     private final Logger log = Logger.getLogger(BrokerConfigurationSetup.class);
 
     /**
-     * The location of the configuration file.
+     * The location of the configuration file. This will be a usable path for the broker to use.
      */
     private final String configurationFile;
 
@@ -26,14 +29,12 @@ public class BrokerConfigurationSetup {
     private final ServerEnvironment serverEnvironment;
 
     public BrokerConfigurationSetup(String configFile, Map<String, String> customConfigProps, ServerEnvironment serverEnv) {
-        if (configFile != null && !configFile.trim().isEmpty()) {
-            this.configurationFile = configFile;
-        } else {
-            this.configurationFile = BrokerSubsystemExtension.BROKER_CONFIG_FILE_DEFAULT;
+        if (configFile == null || configFile.trim().isEmpty()) {
+            configFile = BrokerSubsystemExtension.BROKER_CONFIG_FILE_DEFAULT;
         }
-
         this.customConfiguration = customConfigProps;
         this.serverEnvironment = serverEnv;
+        this.configurationFile = getUsableConfigurationFilePath(configFile, serverEnv);
         prepareConfiguration();
     }
 
@@ -80,5 +81,43 @@ public class BrokerConfigurationSetup {
             customConfigProps.put(prop, defaultValue);
         }
         return;
+    }
+
+    /**
+     * Because the EmbeddedBroker uses third party libs to read the config file, it needs to have been put it in a place
+     * where we can know and pass along its absolute path. This returns that absolute path of the config file.
+     * 
+     * @param configFile
+     *            the absolute or relative path that will be converted to absolute path the broker can use
+     * @param serverEnv
+     *            the server environment we can use to look for the file
+     * 
+     * @return the absolute path of the config file that the broker will use
+     */
+    private String getUsableConfigurationFilePath(String configFile, ServerEnvironment serverEnv) {
+        File file = new File(configFile);
+
+        // if it is already absolute, use it as-is
+        if (file.isAbsolute()) {
+            return file.getAbsolutePath();
+        }
+
+        // see if there is one in the server configuration directory; if so, use it.
+        File serverConfigDir = serverEnv.getServerConfigurationDir();
+        File configFileInServerConfigDir = new File(serverConfigDir, configFile);
+        if (configFileInServerConfigDir.exists()) {
+            return configFileInServerConfigDir.getAbsolutePath();
+        }
+
+        // we still can't find the config file - see if its in the module's exported config/ directory
+        try {
+            Module module = Module.forClass(getClass());
+            Resource r = module.getExportedResource("config", configFile);
+            return r.getURL().toString();
+        } catch (Throwable t) {
+            // oh well, we tried - return the configFile as-is - we'll probably fail later because its probably missing
+            log.info("Cannot determine absolute path of config file [" + configFile + "]- does it exist? - " + t.toString());
+            return configFile;
+        }
     }
 }
