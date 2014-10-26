@@ -116,6 +116,7 @@ public class BrokerService implements Service<BrokerService> {
 
             customConfigProperties.put(BrokerSubsystemExtension.BROKER_CONNECTOR_ADDRESS_SYSPROP, connectorAddress);
             customConfigProperties.put(BrokerSubsystemExtension.BROKER_CONNECTOR_PORT_SYSPROP, connectorPort);
+            log.info("Broker told to bind socket to [" + connectorAddress + ":" + connectorPort + "]");
 
             ServerEnvironment env = envServiceValue.getValue();
             BrokerConfigurationSetup configSetup = new BrokerConfigurationSetup(configurationFile, customConfigProperties, env);
