@@ -73,7 +73,7 @@ public class SubsystemParsingTestCase extends SubsystemBaseParsingTestCase {
     public void testInstallIntoController() throws Exception {
         // Parse the subsystem xml and install into the controller
         String subsystemXml = getSubsystemXml();
-        KernelServices services = super.installInController(subsystemXml);
+        KernelServices services = createKernelServicesBuilder(null).setSubsystemXml(subsystemXml).build();
 
         // Read the whole model and make sure it looks as expected
         ModelNode model = services.readWholeModel();
@@ -94,13 +94,14 @@ public class SubsystemParsingTestCase extends SubsystemBaseParsingTestCase {
     public void testParseAndMarshalModel() throws Exception {
         // Parse the subsystem xml and install into the first controller
         String subsystemXml = getSubsystemXml();
-        KernelServices servicesA = super.installInController(subsystemXml);
+        KernelServices servicesA = createKernelServicesBuilder(null).setSubsystemXml(subsystemXml).build();
+
         // Get the model and the persisted xml from the first controller
         ModelNode modelA = servicesA.readWholeModel();
         String marshalled = servicesA.getPersistedSubsystemXml();
 
         // Install the persisted xml from the first controller into a second controller
-        KernelServices servicesB = super.installInController(marshalled);
+        KernelServices servicesB = createKernelServicesBuilder(null).setSubsystemXml(marshalled).build();
         ModelNode modelB = servicesB.readWholeModel();
 
         // Make sure the models from the two controllers are identical
@@ -113,7 +114,8 @@ public class SubsystemParsingTestCase extends SubsystemBaseParsingTestCase {
      */
     public void testDescribeHandler() throws Exception {
         String subsystemXml = getSubsystemXml();
-        KernelServices servicesA = super.installInController(subsystemXml);
+        KernelServices servicesA = createKernelServicesBuilder(null).setSubsystemXml(subsystemXml).build();
+
         // Get the model and the describe operations from the first controller
         ModelNode modelA = servicesA.readWholeModel();
         ModelNode describeOp = new ModelNode();
@@ -125,7 +127,7 @@ public class SubsystemParsingTestCase extends SubsystemBaseParsingTestCase {
         List<ModelNode> operations = super.checkResultAndGetContents(executeOperation).asList();
 
         // Install the describe options from the first controller into a second controller
-        KernelServices servicesB = super.installInController(operations);
+        KernelServices servicesB = createKernelServicesBuilder(null).setBootOperations(operations).build();
         ModelNode modelB = servicesB.readWholeModel();
 
         // Make sure the models from the two controllers are identical
@@ -138,7 +140,7 @@ public class SubsystemParsingTestCase extends SubsystemBaseParsingTestCase {
     public void testSubsystemRemoval() throws Exception {
         // Parse the subsystem xml and install into the first controller
         String subsystemXml = getSubsystemXml();
-        KernelServices services = super.installInController(subsystemXml);
+        KernelServices services = createKernelServicesBuilder(null).setSubsystemXml(subsystemXml).build();
 
         // Sanity check to test the service was there
         BrokerService broker = (BrokerService) services.getContainer().getRequiredService(BrokerService.SERVICE_NAME).getValue();
@@ -158,7 +160,7 @@ public class SubsystemParsingTestCase extends SubsystemBaseParsingTestCase {
 
     public void testResourceDescription() throws Exception {
         String subsystemXml = getSubsystemXml();
-        KernelServices services = super.installInController(subsystemXml);
+        KernelServices services = createKernelServicesBuilder(null).setSubsystemXml(subsystemXml).build();
 
         PathAddress brokerSubsystemPath = PathAddress.pathAddress(PathElement.pathElement(SUBSYSTEM, BrokerSubsystemExtension.SUBSYSTEM_NAME));
 
@@ -209,7 +211,7 @@ public class SubsystemParsingTestCase extends SubsystemBaseParsingTestCase {
 
     public void testExecuteOperations() throws Exception {
         String subsystemXml = getSubsystemXml();
-        KernelServices services = super.installInController(subsystemXml);
+        KernelServices services = createKernelServicesBuilder(null).setSubsystemXml(subsystemXml).build();
 
         // status check - our service should be available
         BrokerService service = (BrokerService) services.getContainer().getService(BrokerService.SERVICE_NAME).getValue();

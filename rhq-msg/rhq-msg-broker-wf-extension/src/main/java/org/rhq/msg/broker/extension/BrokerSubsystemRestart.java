@@ -32,7 +32,7 @@ class BrokerSubsystemRestart implements OperationStepHandler {
             throw new OperationFailedException("Cannot restart broker", se);
         }
 
-        opContext.completeStep();
+        opContext.stepCompleted();
         return;
     }
 }

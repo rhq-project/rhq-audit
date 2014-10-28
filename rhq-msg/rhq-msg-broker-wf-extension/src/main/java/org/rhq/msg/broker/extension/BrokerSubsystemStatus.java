@@ -26,6 +26,6 @@ class BrokerSubsystemStatus implements OperationStepHandler {
             isStarted = false;
 		}
         opContext.getResult().set(isStarted ? "STARTED" : "STOPPED");
-        opContext.completeStep();
+        opContext.stepCompleted();
 	}
 }

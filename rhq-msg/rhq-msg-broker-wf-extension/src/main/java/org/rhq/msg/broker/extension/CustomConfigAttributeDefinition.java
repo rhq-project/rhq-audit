@@ -23,8 +23,8 @@ import org.jboss.dmr.ModelType;
 public class CustomConfigAttributeDefinition extends MapAttributeDefinition {
 
     public CustomConfigAttributeDefinition() {
-        super(BrokerSubsystemExtension.CUSTOM_CONFIG_ELEMENT, BrokerSubsystemExtension.CUSTOM_CONFIG_ELEMENT, true,
-            0, Integer.MAX_VALUE, new ModelTypeValidator(ModelType.STRING), null, null, Flag.RESTART_RESOURCE_SERVICES);
+        super(BrokerSubsystemExtension.CUSTOM_CONFIG_ELEMENT, BrokerSubsystemExtension.CUSTOM_CONFIG_ELEMENT, true, false, 0, Integer.MAX_VALUE, null,
+                new ModelTypeValidator(ModelType.STRING), null, null, null, false, null, null, (Boolean) null, Flag.RESTART_RESOURCE_SERVICES);
     }
 
     @Override

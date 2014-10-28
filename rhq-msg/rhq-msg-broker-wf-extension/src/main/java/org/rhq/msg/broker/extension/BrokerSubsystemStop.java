@@ -21,13 +21,13 @@ class BrokerSubsystemStop implements OperationStepHandler {
         try {
             ServiceName name = BrokerService.SERVICE_NAME;
             BrokerService service = (BrokerService) opContext.getServiceRegistry(true).getRequiredService(name).getValue();
-            log.info("Asked to stop the embedded agent");
+            log.info("Asked to stop the broker");
             service.stopBroker();
         } catch (Exception e) {
             // the broker service just isn't deployed, so obviously, the broker is already stopped. just keep going
 		}
 
-        opContext.completeStep();
+        opContext.stepCompleted();
         return;
 	}
 }

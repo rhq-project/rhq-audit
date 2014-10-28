@@ -23,6 +23,7 @@ import org.jboss.as.controller.persistence.SubsystemMarshallingContext;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.Property;
+import org.jboss.dmr.ValueExpression;
 import org.jboss.logging.Logger;
 import org.jboss.staxmapper.XMLElementReader;
 import org.jboss.staxmapper.XMLElementWriter;
@@ -121,11 +122,11 @@ public class BrokerSubsystemExtension implements Extension {
             opAdd.get(OP_ADDR).set(PathAddress.pathAddress(SUBSYSTEM_PATH).toModelNode());
             String brokerEnabledValue = reader.getAttributeValue(null, BROKER_ENABLED_ATTR);
             if (brokerEnabledValue != null) {
-                opAdd.get(BROKER_ENABLED_ATTR).setExpression(brokerEnabledValue);
+                opAdd.get(BROKER_ENABLED_ATTR).set(new ValueExpression(brokerEnabledValue));
             }
             String brokerConfigFileValue = reader.getAttributeValue(null, BROKER_CONFIG_FILE_ATTR);
             if (brokerConfigFileValue != null) {
-                opAdd.get(BROKER_CONFIG_FILE_ATTR).setExpression(brokerConfigFileValue);
+                opAdd.get(BROKER_CONFIG_FILE_ATTR).set(new ValueExpression(brokerConfigFileValue));
             }
 
             // Read the children elements
@@ -141,11 +142,11 @@ public class BrokerSubsystemExtension implements Extension {
                 } else if (elementName.equals(CONNECTOR_ELEMENT)) {
                     String val = reader.getAttributeValue(null, CONNECTOR_NAME_ATTR);
                     if (val != null) {
-                        opAdd.get(CONNECTOR_NAME_ATTR).setExpression(val);
+                        opAdd.get(CONNECTOR_NAME_ATTR).set(new ValueExpression(val));
                     }
                     val = reader.getAttributeValue(null, CONNECTOR_PROTOCOL_ATTR);
                     if (val != null) {
-                        opAdd.get(CONNECTOR_PROTOCOL_ATTR).setExpression(val);
+                        opAdd.get(CONNECTOR_PROTOCOL_ATTR).set(new ValueExpression(val));
                     }
                     val = reader.getAttributeValue(null, CONNECTOR_SOCKET_BINDING_ATTR);
                     if (val != null) {
@@ -154,11 +155,11 @@ public class BrokerSubsystemExtension implements Extension {
                     }
                     ParseUtils.requireNoContent(reader);
                 } else if (elementName.equals(BROKER_NAME_ELEMENT)) {
-                    opAdd.get(BROKER_NAME_ELEMENT).setExpression(reader.getElementText());
+                    opAdd.get(BROKER_NAME_ELEMENT).set(new ValueExpression(reader.getElementText()));
                 } else if (elementName.equals(PERSISTENT_ELEMENT)) {
-                    opAdd.get(PERSISTENT_ELEMENT).setExpression(reader.getElementText());
+                    opAdd.get(PERSISTENT_ELEMENT).set(new ValueExpression(reader.getElementText()));
                 } else if (elementName.equals(USE_JMX_ELEMENT)) {
-                    opAdd.get(USE_JMX_ELEMENT).setExpression(reader.getElementText());
+                    opAdd.get(USE_JMX_ELEMENT).set(new ValueExpression(reader.getElementText()));
                 } else {
                     throw ParseUtils.unexpectedElement(reader);
                 }
