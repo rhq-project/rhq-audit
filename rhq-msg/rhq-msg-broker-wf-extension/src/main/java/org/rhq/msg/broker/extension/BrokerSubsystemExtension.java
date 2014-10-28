@@ -80,11 +80,9 @@ public class BrokerSubsystemExtension implements Extension {
     protected static final String CUSTOM_CONFIG_ELEMENT = "custom-configuration";
     protected static final String PROPERTY_ELEMENT = "property";
 
-    protected static final String BROKER_RESTART_OP = "restart";
+    protected static final String BROKER_START_OP = "start";
     protected static final String BROKER_STOP_OP = "stop";
     protected static final String BROKER_STATUS_OP = "status";
-    // TODO: this is just a stub to illustrate how to add a module extension operation that takes a parameter
-    protected static final String BROKER_STUB_OP = "stub";
 
     protected static final PathElement SUBSYSTEM_PATH = PathElement.pathElement(SUBSYSTEM, SUBSYSTEM_NAME);
 

@@ -58,9 +58,8 @@ public class BrokerSubsystemDefinition extends SimpleResourceDefinition {
             .setDefaultValue(new ModelNode("org.rhq.msg.broker")).setValidator(new StringLengthValidator(1)).setAllowNull(false).build();
 
     // operation parameters
-    // TODO: this is just a stub to illustrate how to add a module extension operation that takes a parameter
-    protected static final SimpleAttributeDefinition OP_WITH_PARAM_PARAMETER = new SimpleAttributeDefinitionBuilder("parameter", ModelType.STRING)
-            .setAllowExpression(true).build();
+    protected static final SimpleAttributeDefinition START_OP_PARAM_RESTART = new SimpleAttributeDefinitionBuilder("restart", ModelType.BOOLEAN)
+            .setAllowExpression(true).setDefaultValue(new ModelNode(false)).build();
 
 	private BrokerSubsystemDefinition() {
         super(BrokerSubsystemExtension.SUBSYSTEM_PATH, BrokerSubsystemExtension.getResourceDescriptionResolver(null), BrokerSubsystemAdd.INSTANCE,
@@ -92,8 +91,8 @@ public class BrokerSubsystemDefinition extends SimpleResourceDefinition {
         rr.registerOperationHandler(GenericSubsystemDescribeHandler.DEFINITION, GenericSubsystemDescribeHandler.INSTANCE);
 
         rr.registerOperationHandler(
-                new SimpleOperationDefinitionBuilder(BrokerSubsystemExtension.BROKER_RESTART_OP, BrokerSubsystemExtension.getResourceDescriptionResolver(null))
-                        .build(), BrokerSubsystemRestart.INSTANCE);
+                new SimpleOperationDefinitionBuilder(BrokerSubsystemExtension.BROKER_START_OP, BrokerSubsystemExtension.getResourceDescriptionResolver(null))
+                        .addParameter(START_OP_PARAM_RESTART).build(), BrokerSubsystemStart.INSTANCE);
 
         rr.registerOperationHandler(
                 new SimpleOperationDefinitionBuilder(BrokerSubsystemExtension.BROKER_STOP_OP, BrokerSubsystemExtension.getResourceDescriptionResolver(null))
@@ -102,11 +101,6 @@ public class BrokerSubsystemDefinition extends SimpleResourceDefinition {
         rr.registerOperationHandler(
                 new SimpleOperationDefinitionBuilder(BrokerSubsystemExtension.BROKER_STATUS_OP, BrokerSubsystemExtension.getResourceDescriptionResolver(null))
                         .build(), BrokerSubsystemStatus.INSTANCE);
-
-        // TODO: this is just a stub to illustrate how to add a module extension operation that takes a parameter
-        rr.registerOperationHandler(
-                new SimpleOperationDefinitionBuilder(BrokerSubsystemExtension.BROKER_STUB_OP, BrokerSubsystemExtension.getResourceDescriptionResolver(null))
-                        .addParameter(OP_WITH_PARAM_PARAMETER).build(), BrokerSubsystemOperationWithParameter.INSTANCE);
 
         return;
     }

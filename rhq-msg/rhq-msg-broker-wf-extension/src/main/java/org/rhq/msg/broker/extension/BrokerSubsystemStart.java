@@ -9,13 +9,13 @@ import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceNotFoundException;
 import org.jboss.msc.service.StartException;
 
-class BrokerSubsystemRestart implements OperationStepHandler {
+class BrokerSubsystemStart implements OperationStepHandler {
 
-    static final BrokerSubsystemRestart INSTANCE = new BrokerSubsystemRestart();
+    static final BrokerSubsystemStart INSTANCE = new BrokerSubsystemStart();
 
-    private final Logger log = Logger.getLogger(BrokerSubsystemRestart.class);
+    private final Logger log = Logger.getLogger(BrokerSubsystemStart.class);
 
-    private BrokerSubsystemRestart() {
+    private BrokerSubsystemStart() {
     }
 
     @Override
@@ -23,8 +23,12 @@ class BrokerSubsystemRestart implements OperationStepHandler {
         try {
             ServiceName name = BrokerService.SERVICE_NAME;
             BrokerService service = (BrokerService) opContext.getServiceRegistry(true).getRequiredService(name).getValue();
-            log.info("Asked to restart the broker");
-            service.stopBroker();
+
+            boolean restart = model.get(BrokerSubsystemDefinition.START_OP_PARAM_RESTART.getName()).asBoolean(false);
+            if (restart) {
+                log.info("Asked to restart the broker. Will stop it, then restart it now.");
+                service.stopBroker();
+            }
             service.startBroker();
         } catch (ServiceNotFoundException snfe) {
             throw new OperationFailedException("Cannot restart broker - the broker is disabled", snfe);

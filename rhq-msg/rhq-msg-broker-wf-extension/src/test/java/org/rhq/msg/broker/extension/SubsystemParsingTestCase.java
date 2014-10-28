@@ -195,7 +195,7 @@ public class SubsystemParsingTestCase extends SubsystemBaseParsingTestCase {
 
         // check the operations (there are many other operations that AS adds to our resource, but we only want to check for ours)
         List<String> expectedOperations = Arrays.asList( //
-                BrokerSubsystemExtension.BROKER_RESTART_OP, //
+                BrokerSubsystemExtension.BROKER_START_OP, //
                 BrokerSubsystemExtension.BROKER_STOP_OP, //
                 BrokerSubsystemExtension.BROKER_STATUS_OP);
         Assert.assertTrue(content.get("operations").isDefined());
