@@ -60,6 +60,11 @@ public class BrokerSubsystemDefinition extends SimpleResourceDefinition {
             BrokerSubsystemExtension.CONNECTOR_SOCKET_BINDING_ATTR, ModelType.STRING).setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES)
             .setDefaultValue(new ModelNode("org.rhq.msg.broker")).setValidator(new StringLengthValidator(1)).setAllowNull(false).build();
 
+    // operation parameters
+    // TODO: this is just a stub to illustrate how to add a module extension operation that takes a parameter
+    protected static final SimpleAttributeDefinition OP_WITH_PARAM_PARAMETER = new SimpleAttributeDefinitionBuilder("parameter", ModelType.STRING)
+            .setAllowExpression(true).build();
+
 	private BrokerSubsystemDefinition() {
         super(BrokerSubsystemExtension.SUBSYSTEM_PATH, BrokerSubsystemExtension.getResourceDescriptionResolver(null), BrokerSubsystemAdd.INSTANCE,
                 BrokerSubsystemRemove.INSTANCE);
@@ -100,6 +105,11 @@ public class BrokerSubsystemDefinition extends SimpleResourceDefinition {
         rr.registerOperationHandler(BrokerSubsystemExtension.BROKER_STATUS_OP, BrokerSubsystemStatus.INSTANCE, new DefaultOperationDescriptionProvider(
                 BrokerSubsystemExtension.BROKER_STATUS_OP, BrokerSubsystemExtension.getResourceDescriptionResolver(null), ModelType.STRING), false,
                 OperationEntry.EntryType.PUBLIC);
+
+        // TODO: this is just a stub to illustrate how to add a module extension operation that takes a parameter
+        rr.registerOperationHandler(BrokerSubsystemExtension.BROKER_STUB_OP, BrokerSubsystemOperationWithParameter.INSTANCE,
+                new DefaultOperationDescriptionProvider(BrokerSubsystemExtension.BROKER_STUB_OP, BrokerSubsystemExtension.getResourceDescriptionResolver(null),
+                        ModelType.STRING, OP_WITH_PARAM_PARAMETER), false, OperationEntry.EntryType.PUBLIC);
 
         return;
     }
