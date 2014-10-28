@@ -1,18 +1,15 @@
 package org.rhq.msg.broker.extension;
 
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DESCRIBE;
-
 import org.jboss.as.controller.AttributeDefinition;
 import org.jboss.as.controller.ReloadRequiredWriteAttributeHandler;
 import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
+import org.jboss.as.controller.SimpleOperationDefinitionBuilder;
 import org.jboss.as.controller.SimpleResourceDefinition;
-import org.jboss.as.controller.descriptions.DefaultOperationDescriptionProvider;
 import org.jboss.as.controller.operations.common.GenericSubsystemDescribeHandler;
 import org.jboss.as.controller.operations.validation.StringLengthValidator;
 import org.jboss.as.controller.registry.AttributeAccess;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
-import org.jboss.as.controller.registry.OperationEntry;
 import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.ModelType;
 
@@ -92,24 +89,24 @@ public class BrokerSubsystemDefinition extends SimpleResourceDefinition {
         super.registerOperations(rr);
 
         // We always need to add a 'describe' operation
-        rr.registerOperationHandler(DESCRIBE, GenericSubsystemDescribeHandler.INSTANCE, GenericSubsystemDescribeHandler.INSTANCE, false,
-                OperationEntry.EntryType.PRIVATE);
+        rr.registerOperationHandler(GenericSubsystemDescribeHandler.DEFINITION, GenericSubsystemDescribeHandler.INSTANCE);
 
-        rr.registerOperationHandler(BrokerSubsystemExtension.BROKER_RESTART_OP, BrokerSubsystemRestart.INSTANCE, new DefaultOperationDescriptionProvider(
-                BrokerSubsystemExtension.BROKER_RESTART_OP, BrokerSubsystemExtension.getResourceDescriptionResolver(null)), false,
-                OperationEntry.EntryType.PUBLIC);
+        rr.registerOperationHandler(
+                new SimpleOperationDefinitionBuilder(BrokerSubsystemExtension.BROKER_RESTART_OP, BrokerSubsystemExtension.getResourceDescriptionResolver(null))
+                        .build(), BrokerSubsystemRestart.INSTANCE);
 
-        rr.registerOperationHandler(BrokerSubsystemExtension.BROKER_STOP_OP, BrokerSubsystemStop.INSTANCE, new DefaultOperationDescriptionProvider(
-                BrokerSubsystemExtension.BROKER_STOP_OP, BrokerSubsystemExtension.getResourceDescriptionResolver(null)), false, OperationEntry.EntryType.PUBLIC);
+        rr.registerOperationHandler(
+                new SimpleOperationDefinitionBuilder(BrokerSubsystemExtension.BROKER_STOP_OP, BrokerSubsystemExtension.getResourceDescriptionResolver(null))
+                        .build(), BrokerSubsystemStop.INSTANCE);
 
-        rr.registerOperationHandler(BrokerSubsystemExtension.BROKER_STATUS_OP, BrokerSubsystemStatus.INSTANCE, new DefaultOperationDescriptionProvider(
-                BrokerSubsystemExtension.BROKER_STATUS_OP, BrokerSubsystemExtension.getResourceDescriptionResolver(null), ModelType.STRING), false,
-                OperationEntry.EntryType.PUBLIC);
+        rr.registerOperationHandler(
+                new SimpleOperationDefinitionBuilder(BrokerSubsystemExtension.BROKER_STATUS_OP, BrokerSubsystemExtension.getResourceDescriptionResolver(null))
+                        .build(), BrokerSubsystemStatus.INSTANCE);
 
         // TODO: this is just a stub to illustrate how to add a module extension operation that takes a parameter
-        rr.registerOperationHandler(BrokerSubsystemExtension.BROKER_STUB_OP, BrokerSubsystemOperationWithParameter.INSTANCE,
-                new DefaultOperationDescriptionProvider(BrokerSubsystemExtension.BROKER_STUB_OP, BrokerSubsystemExtension.getResourceDescriptionResolver(null),
-                        ModelType.STRING, OP_WITH_PARAM_PARAMETER), false, OperationEntry.EntryType.PUBLIC);
+        rr.registerOperationHandler(
+                new SimpleOperationDefinitionBuilder(BrokerSubsystemExtension.BROKER_STUB_OP, BrokerSubsystemExtension.getResourceDescriptionResolver(null))
+                        .addParameter(OP_WITH_PARAM_PARAMETER).build(), BrokerSubsystemOperationWithParameter.INSTANCE);
 
         return;
     }

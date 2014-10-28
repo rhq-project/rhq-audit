@@ -64,6 +64,7 @@ public class EmbeddedBroker {
         if (broker == null) {
             throw new IllegalStateException("Broker was not initialized");
         }
+        log.info("Attempting to start the broker");
         broker.start();
         log.info("Started broker");
     }
@@ -78,7 +79,7 @@ public class EmbeddedBroker {
             broker.stop();
             log.info("Stopped broker");
         } finally {
-            setBrokerService(null);
+            setBrokerService(null); // we do not want to attempt to reuse or restart this broker instance again
         }
     }
 
@@ -109,6 +110,12 @@ public class EmbeddedBroker {
         brokerService = broker;
     }
 
+    /**
+     * This is protected because we don't want it to leak out. If it is ever stopped, it typically can't be reused or
+     * restarted again.
+     * 
+     * @return the actual broker instance
+     */
     protected BrokerService getBrokerService() {
         return brokerService;
     }
