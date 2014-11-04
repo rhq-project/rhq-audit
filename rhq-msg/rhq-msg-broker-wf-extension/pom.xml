@@ -94,8 +94,35 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.jboss.plugins</groupId>
+                <artifactId>wildfly-extension-maven-plugin</artifactId>
+                <configuration>
+                    <moduleZip>${project.build.directory}/${project.build.finalName}-module.zip</moduleZip>
+                    <jbossHome>${org.rhq.msg.broker.wildfly.home}</jbossHome>
+                    <serverConfig>standalone/configuration/standalone.xml</serverConfig>
+                    <subsystem>${basedir}/src/main/scripts/standalone-subsystem.xml</subsystem>
+                    <profiles>
+                        <profile>default</profile>
+                    </profiles>
+                    <socketBinding>${basedir}/src/main/scripts/socket-binding.xml</socketBinding>
+                    <socketBindingGroups>
+                        <socketBindingGroup>standard-sockets</socketBindingGroup>
+                    </socketBindingGroups>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
+    <pluginRepositories>
+        <!-- needed for the Wildfly Extension plugin -->
+        <pluginRepository>
+            <id>clojars</id>
+            <name>clojars</name>
+            <url>https://clojars.org/repo</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <repositories>
         <repository>
@@ -139,6 +166,7 @@
             <version>${jboss.version}</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-server</artifactId>
