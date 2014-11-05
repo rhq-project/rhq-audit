@@ -101,6 +101,7 @@
                 <configuration>
                     <moduleZip>${project.build.directory}/${project.build.finalName}-module.zip</moduleZip>
                     <jbossHome>${org.rhq.msg.broker.wildfly.home}</jbossHome>
+                    <modulesHome>modules/system/layers/base</modulesHome>
                     <serverConfig>standalone/configuration/standalone.xml</serverConfig>
                     <subsystem>${basedir}/src/main/scripts/standalone-subsystem.xml</subsystem>
                     <profiles>
