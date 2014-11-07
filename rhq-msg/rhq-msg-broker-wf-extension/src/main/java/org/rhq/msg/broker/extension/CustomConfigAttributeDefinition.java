@@ -7,6 +7,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.jboss.as.controller.MapAttributeDefinition;
+import org.jboss.as.controller.SimpleMapAttributeDefinition;
 import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.as.controller.descriptions.ResourceDescriptionResolver;
 import org.jboss.as.controller.operations.validation.ModelTypeValidator;
@@ -23,8 +24,8 @@ import org.jboss.dmr.ModelType;
 public class CustomConfigAttributeDefinition extends MapAttributeDefinition {
 
     public CustomConfigAttributeDefinition() {
-        super(BrokerSubsystemExtension.CUSTOM_CONFIG_ELEMENT, BrokerSubsystemExtension.CUSTOM_CONFIG_ELEMENT, true, false, 0, Integer.MAX_VALUE, null,
-                new ModelTypeValidator(ModelType.STRING), null, null, null, false, null, null, (Boolean) null, Flag.RESTART_RESOURCE_SERVICES);
+        super(new SimpleMapAttributeDefinition.Builder(BrokerSubsystemExtension.CUSTOM_CONFIG_ELEMENT, true).setAllowExpression(false).setMinSize(0)
+                .setMaxSize(Integer.MAX_VALUE).setElementValidator(new ModelTypeValidator(ModelType.STRING)).setFlags(Flag.RESTART_RESOURCE_SERVICES));
     }
 
     @Override

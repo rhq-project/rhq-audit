@@ -16,7 +16,7 @@
     <name>RHQ Messaging Broker WildFly Extension</name>
 
     <properties>
-        <jboss.version>7.4.0.Final-redhat-4</jboss.version>
+        <wildfly.version>8.1.0.Final</wildfly.version>
 
         <!-- this is used to replace the variable in module.xml -->
         <moduleName>org.rhq.msg.broker</moduleName>
@@ -125,35 +125,6 @@
         </pluginRepository>
     </pluginRepositories>
 
-    <repositories>
-        <repository>
-            <id>eap</id>
-            <name>EAP Repository</name>
-            <url>http://maven.repository.redhat.com/techpreview/eap6/6.3.0.Alpha/maven-repository/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-
-        <repository>
-            <id>jboss-public-repo-group</id>
-            <name>JBoss Public Repository Group</name>
-            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-
-        <repository>
-            <id>redhat-maven-repository</id>
-            <name>Red Hat maven repository</name>
-            <url>http://maven.repository.redhat.com/earlyaccess/all</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.rhq.msg</groupId>
@@ -162,16 +133,16 @@
         </dependency>
     
         <dependency>
-            <groupId>org.jboss.as</groupId>
-            <artifactId>jboss-as-controller</artifactId>
-            <version>${jboss.version}</version>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-controller</artifactId>
+            <version>${wildfly.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.as</groupId>
-            <artifactId>jboss-as-server</artifactId>
-            <version>${jboss.version}</version>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-server</artifactId>
+            <version>${wildfly.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -183,9 +154,9 @@
         </dependency>
         
         <dependency>
-            <groupId>org.jboss.as</groupId>
-            <artifactId>jboss-as-subsystem-test-framework</artifactId>
-            <version>${jboss.version}</version>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-subsystem-test-framework</artifactId>
+            <version>${wildfly.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
