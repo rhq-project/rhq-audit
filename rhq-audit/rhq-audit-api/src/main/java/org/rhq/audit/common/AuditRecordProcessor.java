@@ -2,6 +2,7 @@ package org.rhq.audit.common;
 
 import javax.jms.JMSException;
 
+import org.rhq.msg.common.ConnectionContextFactory;
 import org.rhq.msg.common.Endpoint;
 import org.rhq.msg.common.Endpoint.Type;
 import org.rhq.msg.common.MessageId;
@@ -12,10 +13,13 @@ import org.rhq.msg.common.producer.ProducerConnectionContext;
 /**
  * Consumes and produces audit records.
  */
-public class AuditRecordProcessor extends MessageProcessor {
+public class AuditRecordProcessor extends ConnectionContextFactory {
+
+    private final MessageProcessor msgProcessor;
 
     public AuditRecordProcessor(String brokerURL) throws JMSException {
         super(brokerURL);
+        msgProcessor = new MessageProcessor();
     }
 
     /**
@@ -28,7 +32,7 @@ public class AuditRecordProcessor extends MessageProcessor {
      */
     public MessageId sendAuditRecord(AuditRecord auditRecord) throws JMSException {
         ProducerConnectionContext context = createProducerConnectionContext(getEndpoint());
-        return send(context, auditRecord);
+        return msgProcessor.send(context, auditRecord);
     }
 
     /**
@@ -39,7 +43,7 @@ public class AuditRecordProcessor extends MessageProcessor {
      * @throws JMSException
      */
     public void listen(BasicMessageListener<AuditRecord> listener) throws JMSException {
-        listen(createConsumerConnectionContext(getEndpoint()), listener);
+        msgProcessor.listen(createConsumerConnectionContext(getEndpoint()), listener);
     }
 
     /**

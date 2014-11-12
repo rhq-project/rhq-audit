@@ -71,7 +71,7 @@ public class EmbeddedBrokerTest {
             consumerConnection.close();
 
             // make sure the message flowed properly
-            Assert.assertTrue(errors.isEmpty(), "Failed to send message propertly: " + errors);
+            Assert.assertTrue(errors.isEmpty(), "Failed to send message properly: " + errors);
             Assert.assertEquals(receivedMessages.size(), 1, "Didn't receive message: " + receivedMessages);
             BasicMessage receivedBasicMessage = receivedMessages.get(0);
             Assert.assertEquals(receivedBasicMessage.getMessage(), basicMessage.getMessage());
@@ -121,7 +121,7 @@ public class EmbeddedBrokerTest {
             consumerConnection.close();
 
             // make sure the message flowed properly
-            Assert.assertTrue(errors.isEmpty(), "Failed to send message propertly: " + errors);
+            Assert.assertTrue(errors.isEmpty(), "Failed to send message properly: " + errors);
             Assert.assertEquals(receivedMessages.size(), 1, "Didn't receive message: " + receivedMessages);
             SpecificMessage receivedSpecificMessage = receivedMessages.get(0);
             Assert.assertEquals(receivedSpecificMessage.getMessage(), specificMessage.getMessage());
@@ -169,7 +169,7 @@ public class EmbeddedBrokerTest {
             consumerConnection.close();
 
             // make sure the message flowed properly
-            Assert.assertTrue(errors.isEmpty(), "Failed to send message propertly: " + errors);
+            Assert.assertTrue(errors.isEmpty(), "Failed to send message properly: " + errors);
             Assert.assertEquals(receivedMessages.size(), 1, "Didn't receive message: " + receivedMessages);
             SpecificMessage receivedSpecificMessage = receivedMessages.get(0);
             Assert.assertEquals(receivedSpecificMessage.getMessage(), specificMessage.getMessage());

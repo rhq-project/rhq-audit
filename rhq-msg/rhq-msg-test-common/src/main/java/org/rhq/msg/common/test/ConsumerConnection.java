@@ -4,8 +4,8 @@ import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 
+import org.rhq.msg.common.ConnectionContextFactory;
 import org.rhq.msg.common.Endpoint;
-import org.rhq.msg.common.MessageProcessor;
 import org.rhq.msg.common.consumer.ConsumerConnectionContext;
 
 /**
@@ -15,7 +15,7 @@ import org.rhq.msg.common.consumer.ConsumerConnectionContext;
  * The constructor creates the connection and attaches the listener after which
  * the listener can start consuming messages as they are produced.
  */
-public class ConsumerConnection extends MessageProcessor {
+public class ConsumerConnection extends ConnectionContextFactory {
 
     private ConsumerConnectionContext ccc;
 

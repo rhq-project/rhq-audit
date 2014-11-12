@@ -2,6 +2,7 @@ package org.rhq.idgen.common;
 
 import javax.jms.JMSException;
 
+import org.rhq.msg.common.ConnectionContextFactory;
 import org.rhq.msg.common.Endpoint;
 import org.rhq.msg.common.Endpoint.Type;
 import org.rhq.msg.common.MessageId;
@@ -12,19 +13,22 @@ import org.rhq.msg.common.producer.ProducerConnectionContext;
 /**
  * Produces requests for IDs, as well as consumes those requests.
  */
-public class IDRequestMessageProcessor extends MessageProcessor {
+public class IDRequestMessageProcessor extends ConnectionContextFactory {
+
+    private MessageProcessor msgProcessor;
 
     public IDRequestMessageProcessor(String brokerURL) throws JMSException {
         super(brokerURL);
+        msgProcessor = new MessageProcessor();
     }
 
     public MessageId sendIDRequestMessage(IDRequestMessage idRequestMessage) throws JMSException {
         ProducerConnectionContext context = createProducerConnectionContext(getEndpoint());
-        return send(context, idRequestMessage);
+        return msgProcessor.send(context, idRequestMessage);
     }
 
     public void listen(BasicMessageListener<IDRequestMessage> listener) throws JMSException {
-        listen(createConsumerConnectionContext(getEndpoint()), listener);
+        msgProcessor.listen(createConsumerConnectionContext(getEndpoint()), listener);
     }
 
     /**

@@ -3,8 +3,8 @@ package org.rhq.msg.common.test;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
+import org.rhq.msg.common.ConnectionContextFactory;
 import org.rhq.msg.common.Endpoint;
-import org.rhq.msg.common.MessageProcessor;
 import org.rhq.msg.common.producer.ProducerConnectionContext;
 
 /**
@@ -14,7 +14,7 @@ import org.rhq.msg.common.producer.ProducerConnectionContext;
  * The constructor creates the connection after which you just call sendMessage
  * to produce a message.
  */
-public class ProducerConnection extends MessageProcessor {
+public class ProducerConnection extends ConnectionContextFactory {
 
     private ProducerConnectionContext pcc;
 

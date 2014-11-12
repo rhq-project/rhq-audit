@@ -36,4 +36,16 @@ public class ConnectionContext {
     public void setDestination(Destination destination) {
         this.destination = destination;
     }
+
+    /**
+     * Sets this context object with the same data found in the source context.
+     * 
+     * @param source
+     *            the source context whose data is to be copied
+     */
+    public void copy(ConnectionContext source) {
+        this.connection = source.connection;
+        this.session = source.session;
+        this.destination = source.destination;
+    }
 }
