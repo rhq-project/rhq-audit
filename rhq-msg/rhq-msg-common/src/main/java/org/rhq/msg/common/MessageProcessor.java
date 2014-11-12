@@ -1,5 +1,7 @@
 package org.rhq.msg.common;
 
+import java.util.concurrent.Future;
+
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
@@ -10,6 +12,7 @@ import javax.jms.TemporaryQueue;
 import org.rhq.msg.common.consumer.AbstractBasicMessageListener;
 import org.rhq.msg.common.consumer.BasicMessageListener;
 import org.rhq.msg.common.consumer.ConsumerConnectionContext;
+import org.rhq.msg.common.consumer.FutureBasicMessageListener;
 import org.rhq.msg.common.consumer.RPCConnectionContext;
 import org.rhq.msg.common.producer.ProducerConnectionContext;
 import org.slf4j.Logger;
@@ -57,7 +60,7 @@ public class MessageProcessor {
      * Send the given message to its destinations across the message bus. Once sent, the message will get assigned a
      * generated message ID. That message ID will also be returned by this method.
      * 
-     * This is fire-and-forget - no response is expected of the remote endpoint.
+     * Since this is fire-and-forget - no response is expected of the remote endpoint.
      * 
      * @param context
      *            information that determines where the message is sent
@@ -108,12 +111,21 @@ public class MessageProcessor {
      * Send the given message to its destinations across the message bus and any response sent back will be passed to the
      * given listener. Use this for request-response messages where you expect to get a non-void response back.
      * 
+     * The response listener should close its associated consumer since typically there is only a single response that is
+     * expected. This is left to the listener to do in case there are special circumstances where the listener does
+     * expect multiple response messages.
+     * 
+     * If the caller merely wants to wait for a single response and obtain the response message to process it further,
+     * consider using instead the method {@link #sendRPC(ProducerConnectionContext, BasicMessage)} and use its returned
+     * Future to wait for the response, rather than having to supply your own response listener.
+     * 
      * @param context
      *            information that determines where the message is sent
      * @param basicMessage
      *            the request message to send
      * @param responseListener
-     *            the listener that will process the response of the request
+     *            The listener that will process the response of the request. This listener should close its associated
+     *            consumer when appropriate.
      * 
      * @param T
      *            the expected basic message type that will be received as the response to the request
@@ -123,7 +135,7 @@ public class MessageProcessor {
      * 
      * @see {@link #createProducerConnectionContext(Endpoint)}
      */
-    public <T extends BasicMessage> RPCConnectionContext send(ProducerConnectionContext context, BasicMessage basicMessage,
+    public <T extends BasicMessage> RPCConnectionContext sendAndListen(ProducerConnectionContext context, BasicMessage basicMessage,
             BasicMessageListener<T> responseListener) throws JMSException {
 
         if (context == null) {
@@ -182,6 +194,37 @@ public class MessageProcessor {
         basicMessage.setMessageId(messageId);
 
         return rpcContext;
+    }
+
+    /**
+     * Send the given message to its destinations across the message bus and returns a Future to allow the caller to
+     * retrieve the response.
+     * 
+     * This is intended to mimic an RPC-like request-response workflow. It is assumed the request will trigger a single
+     * response message to be sent back. This method returns a Future that will provide you with the response message
+     * that is received back.
+     * 
+     * @param context
+     *            information that determines where the message is sent
+     * @param basicMessage
+     *            the request message to send
+     * @param expectedResponseMessageClass
+     *            this is the message class of the expected response object.
+     * 
+     * @param R
+     *            the expected basic message type that will be received as the response to the request
+     * 
+     * @return a future that allows you to wait for and get the response of the given response type
+     * @throws JMSException
+     * 
+     * @see {@link #createProducerConnectionContext(Endpoint)}
+     */
+    public <R extends BasicMessage> Future<R> sendRPC(ProducerConnectionContext context, BasicMessage basicMessage, Class<R> expectedResponseMessageClass)
+            throws JMSException {
+
+        FutureBasicMessageListener<R> futureListener = new FutureBasicMessageListener<R>(expectedResponseMessageClass);
+        sendAndListen(context, basicMessage, futureListener);
+        return futureListener;
     }
 
     /**
