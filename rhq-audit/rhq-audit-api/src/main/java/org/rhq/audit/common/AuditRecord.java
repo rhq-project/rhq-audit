@@ -3,6 +3,7 @@ package org.rhq.audit.common;
 import java.util.Map;
 
 import org.rhq.msg.common.BasicMessage;
+import org.rhq.msg.common.SimpleBasicMessage;
 
 import com.google.gson.annotations.Expose;
 
@@ -17,7 +18,7 @@ import com.google.gson.annotations.Expose;
  * when the actual audited event happened.
  * 
  */
-public class AuditRecord extends BasicMessage {
+public class AuditRecord extends SimpleBasicMessage {
     @Expose
     private final Subsystem subsystem;
     @Expose
