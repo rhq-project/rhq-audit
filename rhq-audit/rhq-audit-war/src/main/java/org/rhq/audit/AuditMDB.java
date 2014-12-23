@@ -11,7 +11,7 @@ import org.rhq.audit.consumer.DataSourceConsumer;
 
 @MessageDriven(messageListenerInterface = MessageListener.class, activationConfig = {
  @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-        @ActivationConfigProperty(propertyName = "destination", propertyValue = "QueueName") })
+        @ActivationConfigProperty(propertyName = "destination", propertyValue = "AuditQueue") })
 public class AuditMDB extends DataSourceConsumer {
     @Resource(mappedName = "java:jboss/datasources/RHQAuditDS")
     private DataSource auditDataSource;

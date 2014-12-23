@@ -29,7 +29,8 @@ public class AuditRecord extends SimpleBasicMessage {
     }
 
     protected AuditRecord() {
-        ; // Intentionally left blank
+        // leave everything empty, but we still want to at least set the timestamp to now.
+        timestamp = System.currentTimeMillis();
     }
 
     public AuditRecord(String message, Subsystem subsystem) {

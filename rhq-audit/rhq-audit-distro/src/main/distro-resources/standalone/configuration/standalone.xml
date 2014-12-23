@@ -322,6 +322,7 @@
                             </xa-pool>
                         </connection-definition>
                     </connection-definitions>
+                    <!--
                     <admin-objects>
                         <admin-object class-name="org.apache.activemq.command.ActiveMQQueue" jndi-name="java:/queue/QueueName" enabled="true"
                             use-java-context="true" pool-name="QueueName">
@@ -336,6 +337,7 @@
                             </config-property>
                         </admin-object>
                     </admin-objects>
+                    -->
                 </resource-adapter>
             </resource-adapters>
         </subsystem>
