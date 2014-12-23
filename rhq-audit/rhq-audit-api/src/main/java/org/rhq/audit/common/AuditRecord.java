@@ -20,12 +20,16 @@ import com.google.gson.annotations.Expose;
  */
 public class AuditRecord extends SimpleBasicMessage {
     @Expose
-    private final Subsystem subsystem;
+    private Subsystem subsystem;
     @Expose
-    private final long timestamp;
+    private long timestamp;
 
     public static AuditRecord fromJSON(String json) {
         return BasicMessage.fromJSON(json, AuditRecord.class);
+    }
+
+    protected AuditRecord() {
+        ; // Intentionally left blank
     }
 
     public AuditRecord(String message, Subsystem subsystem) {

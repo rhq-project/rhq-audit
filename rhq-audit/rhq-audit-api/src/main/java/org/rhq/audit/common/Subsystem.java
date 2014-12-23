@@ -10,7 +10,11 @@ public class Subsystem {
     public static final Subsystem MISCELLANEOUS = new Subsystem("MISC");
 
     @Expose
-    private final String name;
+    private String name;
+
+    protected Subsystem() {
+        ; // intentionally left blank
+    }
 
     public Subsystem(String name) {
         if (name == null || name.length() == 0) {

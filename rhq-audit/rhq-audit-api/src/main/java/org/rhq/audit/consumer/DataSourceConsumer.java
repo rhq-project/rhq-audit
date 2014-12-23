@@ -1,6 +1,8 @@
 package org.rhq.audit.consumer;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
@@ -11,6 +13,8 @@ import org.rhq.audit.common.AuditRecord;
 import org.rhq.audit.common.Subsystem;
 import org.rhq.msg.common.MessageId;
 import org.rhq.msg.common.consumer.BasicMessageListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Stores audit records in the backend data store via the given DataSource.
@@ -18,8 +22,10 @@ import org.rhq.msg.common.consumer.BasicMessageListener;
  * @author John Mazzitelli
  */
 public class DataSourceConsumer extends BasicMessageListener<AuditRecord> {
-    private final DataSource dataSource;
-    private final SqlGenerator sqlGenerator;
+    private final Logger log = LoggerFactory.getLogger(DataSourceConsumer.class);
+
+    private DataSource dataSource;
+    private SqlGenerator sqlGenerator;
 
     /**
      * You can implement your own custom SQL generator and pass it to the constructor of DataSourceConsumer if you want
@@ -34,30 +40,30 @@ public class DataSourceConsumer extends BasicMessageListener<AuditRecord> {
          * @return the INSERT SQL statement that can be used to store the audit record
          */
         public String generateSql(AuditRecord auditRecord);
+
+        /**
+         * Asks the SQL generator to initialize its schema if required.
+         */
+        public void createSchema(DataSource ds);
     }
 
-    public DataSourceConsumer(DataSource ds) {
-        this(ds, null);
+    protected DataSource getDataSource() {
+        return this.dataSource;
     }
 
-    /**
-     * Creates the consumer that will store audit records to the given datasource using the INSERT SQL that is generated
-     * by the given SQL generator object. If the SQL generator is null, a default SQL generator will be used that
-     * assumes a table exists called RHQ_AUDIT with column names of ID, CORRELATION_ID, SUBSYSTEM, TIMESTAMP, MESSAGE,
-     * and DETAILS.
-     * 
-     * @param ds
-     *            the data source where the audit records are stored
-     * @param sqlGenerator
-     *            the object that generates the INSERT SQL statement used to insert the given audit record.
-     */
-    public DataSourceConsumer(DataSource ds, SqlGenerator sqlGenerator) {
-        if (ds == null) {
-            throw new NullPointerException("datasource is null");
+    protected void setDataSource(DataSource dataSource) {
+        if (dataSource == null) {
+            throw new IllegalArgumentException("datasource is null");
         }
-        this.dataSource = ds;
+        this.dataSource = dataSource;
+    }
 
-        // if no SQL generator given, use a default one that assumes a simple schema with one table called RHQ_AUDIT
+    protected SqlGenerator getSqlGenerator() {
+        return this.sqlGenerator;
+    }
+
+    protected void setSqlGenerator(SqlGenerator sqlGenerator) {
+        // if no SQL generator given, use a default one that assumes a simple schema with one table
         if (sqlGenerator == null) {
             sqlGenerator = new SqlGenerator() {
                 @Override
@@ -69,14 +75,65 @@ public class DataSourceConsumer extends BasicMessageListener<AuditRecord> {
                     final Subsystem subsystem = auditRecord.getSubsystem();
                     final long timestamp = auditRecord.getTimestamp();
 
-                    final String sql = String.format(
-                            "INSERT INTO RHQ_AUDIT (ID, CORRELATION_ID, SUBSYSTEM, TIMESTAMP, MESSAGE, DETAILS) VALUES ('%s', '%s', '%s', '%d', '%s', '%s')",
+                    final String sql = String.format("INSERT INTO RHQ_AUDIT " + //
+                            "(ID, CORRELATION_ID, SUBSYSTEM, AUDIT_TIME, MESSAGE, DETAILS) " + //
+                            "VALUES ('%s', '%s', '%s', %d, '%s', '%s')", //
                             id, corId, subsystem, timestamp, msg, details);
                     return sql;
                 }
+
+                @Override
+                public void createSchema(DataSource ds) {
+                    String createString = "CREATE TABLE RHQ_AUDIT (" + //
+                            "ID VARCHAR(512) NULL," + //
+                            "CORRELATION_ID VARCHAR(512) NULL," + //
+                            "SUBSYSTEM VARCHAR(512) NULL," + //
+                            "AUDIT_TIME LONG NULL," + //
+                            "MESSAGE VARCHAR(4096) NULL," + //
+                            "DETAILS VARCHAR(4096) NULL)";
+
+                    Connection conn = null;
+                    try {
+                        conn = ds.getConnection();
+                        DatabaseMetaData metadata = conn.getMetaData();
+                        ResultSet tables = metadata.getTables(null, null, "RHQ_AUDIT", new String[] { "TABLE" });
+                        if (!tables.next()) {
+                            Statement stmt = conn.createStatement();
+                            stmt.executeUpdate(createString);
+                            log.info("Audit schema has been created");
+                        } else {
+                            log.info("Audit schema exists.");
+                        }
+                    } catch (SQLException sqle) {
+                        log.error("Failed to create audit schema - audit subsystem is most likely in a bad state", sqle);
+                    } finally {
+                        if (conn != null) {
+                            try {
+                                conn.close();
+                            } catch (SQLException sqle) {
+                                log.error("Failed to close connection", sqle);
+                            }
+                        }
+                    }
+                }
             };
         }
+
         this.sqlGenerator = sqlGenerator;
+    }
+
+    /**
+     * Call this to initialize the consumer which verifies it is ready and will attempt to create a schema.
+     *
+     * @param ds
+     *            the datasource
+     * @param sg
+     *            the sql generator to use - if <code>null</code>, one is created that uses the default schema
+     */
+    protected void initialize(DataSource ds, SqlGenerator sg) {
+        setDataSource(ds);
+        setSqlGenerator(sg);
+        getSqlGenerator().createSchema(getDataSource());
     }
 
     @Override

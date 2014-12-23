@@ -1,6 +1,8 @@
 package org.rhq.audit.consumer;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
@@ -44,8 +46,17 @@ public class DataSourceConsumerTest extends ProducerConsumerSetup {
                 }
             }
         });
+        // mock out the consumer's table existence check - pretend the schema always exists
+        DatabaseMetaData mockMetadata = Mockito.mock(DatabaseMetaData.class);
+        ResultSet mockMetadataResults = Mockito.mock(ResultSet.class);
+        Mockito.when(mockConn.getMetaData()).thenReturn(mockMetadata);
+        Mockito.when(
+                mockMetadata.getTables(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+                        Mockito.any(String[].class))).thenReturn(mockMetadataResults);
+        Mockito.when(mockMetadataResults.next()).thenReturn(true);
 
-        DataSourceConsumer listener = new DataSourceConsumer(mockDs);
+        DataSourceConsumer listener = new DataSourceConsumer();
+        listener.initialize(mockDs, null);
         consumer.listen(listener);
 
         producer.sendAuditRecord(new AuditRecord("msg: no details, no timestamp", Subsystem.MISCELLANEOUS));
