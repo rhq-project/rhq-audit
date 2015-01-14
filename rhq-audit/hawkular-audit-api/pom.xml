@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.hawkular.audit</groupId>
+        <artifactId>hawkular-audit-parent</artifactId>
+        <version>0.2</version>
+    </parent>
+
+    <groupId>org.hawkular.audit</groupId>
+    <artifactId>hawkular-audit-api</artifactId>
+    <packaging>jar</packaging>
+    <version>0.2</version>
+    <name>Hawkular Audit API</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.hawkular.bus</groupId>
+            <artifactId>hawkular-bus-common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hawkular.bus</groupId>
+            <artifactId>hawkular-bus-test-common</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+</project>

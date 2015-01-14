@@ -1,0 +1,6 @@
+Build this and run standalone.sh to get an audit server running.
+
+You send audit messages over the bus that are then stored. You can send audit messages via curl over the bus' REST interface:
+
+curl -d "body={"subsystem":{"name":"mysub"},"message":"mymsg2","details":{"key2":"value2","key1":"value1"}}" http://localhost:8080/hawkular-bus/message/QueueName?type=queue
+
